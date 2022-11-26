@@ -1,0 +1,10 @@
+liquibase {
+    activities {
+        main {
+            changeLogFile "db/migration/db.changelog-master.xml"
+            url System.getenv('POSTGRESQL_URL')
+            username System.getenv('POSTGRESQL_USERNAME')
+            password System.getenv('POSTGRESQL_PASSWORD')
+        }
+    }
+}

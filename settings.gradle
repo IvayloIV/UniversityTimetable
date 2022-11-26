@@ -1,0 +1,3 @@
+rootProject.name = 'universitytimetable'
+include 'liquibase'
+include 'application'
