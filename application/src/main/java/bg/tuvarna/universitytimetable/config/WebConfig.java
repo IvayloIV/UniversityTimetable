@@ -19,6 +19,8 @@ public class WebConfig implements WebMvcConfigurer {
     public MessageSource messageSource() {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
         source.setBasenames("locale/global");
+        source.setDefaultEncoding("Windows-1251");
+        source.setUseCodeAsDefaultMessage(true);
         return source;
     }
 

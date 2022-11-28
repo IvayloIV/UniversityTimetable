@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="~{fragments/head}"/>
+</head>
+<body>
+<div class="container-fluid px-0">
+    <header>
+        <th:block th:include="~{fragments/nav}"/>
+    </header>
+    <main class="mt-3">
+        <th:block th:include="~{fragments/message}"/>
+        <th:block th:include="${view}"/>
+    </main>
+    <footer class="mt-3">
+        <th:block th:include="~{fragments/footer}"/>
+    </footer>
+</div>
+</body>
+</html>
