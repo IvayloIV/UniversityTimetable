@@ -1,5 +1,6 @@
 package bg.tuvarna.universitytimetable.config;
 
+import bg.tuvarna.universitytimetable.interceptor.PasswordUpdateInterceptor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,12 @@ import java.util.Locale;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    private final PasswordUpdateInterceptor passwordUpdateInterceptor;
+
+    public WebConfig(PasswordUpdateInterceptor passwordUpdateInterceptor) {
+        this.passwordUpdateInterceptor = passwordUpdateInterceptor;
+    }
 
     @Bean
     public MessageSource messageSource() {
@@ -41,5 +48,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
+        registry.addInterceptor(passwordUpdateInterceptor)
+                .excludePathPatterns("/user/**", "/webjars/**", "/js/**");
     }
 }

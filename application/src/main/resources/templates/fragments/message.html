@@ -3,6 +3,7 @@
         <div class="d-flex">
             <div class="toast-body flex-grow-1">
                 <th:block th:if="${(param.loginError != null) and (param.loginError[0] == 'true')}" th:text="#{loginUser.badCredentials}"/>
+                <th:block th:if="${message != null}" th:text="${message}"/>
             </div>
             <button type="button" class="btn-close btn-close-white mx-3 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>

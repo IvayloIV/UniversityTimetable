@@ -29,7 +29,8 @@ public class SecurityConfig {
                 .csrfTokenRepository(csrfTokenRepository())
             .and()
                 .authorizeRequests()
-                .antMatchers("/user/login", "/webjars/**", "/js/**").anonymous()
+                .antMatchers("/webjars/**", "/js/**").permitAll()
+                .antMatchers("/user/login").anonymous()
 //                .antMatchers("/user/list", "/user/register").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
             .and()
@@ -37,12 +38,12 @@ public class SecurityConfig {
                 .loginPage(LOGIN_PAGE)
                 .usernameParameter("email")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/user/password/update")
                 .failureHandler(this::onAuthenticationFailure)
             .and()
                 .logout()
                 .logoutUrl("/user/logout")
-                .logoutSuccessUrl("/");
+                .logoutSuccessUrl("/user/login");
 
         return httpSecurity.build();
     }
