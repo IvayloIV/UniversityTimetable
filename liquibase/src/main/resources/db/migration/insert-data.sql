@@ -2,7 +2,7 @@
 
 --changeset ivaylo_ivanov:1
 INSERT INTO university_user (email, password, role, created_date, password_updated_date)
-VALUES ('admin@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'ADMIN', '2022-11-24 13:00', '2022-11-24 13:00');
+VALUES ('admin@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'ADMIN', '2022-11-24 13:00', '2022-11-24 13:01');
 
 INSERT INTO faculty (name_bg, name_en)
 VALUES ('МТФ', 'MTF'),
