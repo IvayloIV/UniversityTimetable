@@ -1,0 +1,158 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="createTeacher">
+    <h1 class="text-center text-dark mt-4" th:text="#{createTeacher.title}"></h1>
+    <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50 mb-4">
+    <form id="create-teacher-form" class="form mx-auto w-75" th:action="@{/teacher/create}" th:method="POST" th:object="${createTeacherData}">
+        <div class="form-group my-3">
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="form-control" id="email"
+                           th:field="*{email}"
+                           th:placeholder="#{createTeacher.email}">
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('email')}"
+                       th:each="error : ${#fields.errors('email')}"
+                       th:text="${error}"></p>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" id="ucn"
+                           th:field="*{ucn}"
+                           th:placeholder="#{createTeacher.ucn}">
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('ucn')}"
+                       th:each="error : ${#fields.errors('ucn')}"
+                       th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group my-3">
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="form-control" id="academicRankBg"
+                           th:field="*{academicRankBg}"
+                           th:placeholder="#{createTeacher.academicRankBg}">
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('academicRankBg')}"
+                       th:each="error : ${#fields.errors('academicRankBg')}"
+                       th:text="${error}"></p>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" id="academicRankEn"
+                           th:field="*{academicRankEn}"
+                           th:placeholder="#{createTeacher.academicRankEn}">
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('academicRankEn')}"
+                       th:each="error : ${#fields.errors('academicRankEn')}"
+                       th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group my-3">
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="form-control" id="firstNameBg"
+                           th:field="*{firstNameBg}"
+                           th:placeholder="#{createTeacher.firstNameBg}">
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('firstNameBg')}"
+                       th:each="error : ${#fields.errors('firstNameBg')}"
+                       th:text="${error}"></p>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" id="firstNameEn"
+                           th:field="*{firstNameEn}"
+                           th:placeholder="#{createTeacher.firstNameEn}">
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('firstNameEn')}"
+                       th:each="error : ${#fields.errors('firstNameEn')}"
+                       th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group my-3">
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="form-control" id="lastNameBg"
+                           th:field="*{lastNameBg}"
+                           th:placeholder="#{createTeacher.lastNameBg}">
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('lastNameBg')}"
+                       th:each="error : ${#fields.errors('lastNameBg')}"
+                       th:text="${error}"></p>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" id="lastNameEn"
+                           th:field="*{lastNameEn}"
+                           th:placeholder="#{createTeacher.lastNameEn}">
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('lastNameEn')}"
+                       th:each="error : ${#fields.errors('lastNameEn')}"
+                       th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group my-3">
+            <h3 class="text-dark" th:text="#{createTeacher.freeTimeTitle}"></h3>
+            <hr class="hr-2 border-top border-primary border-2 mx-auto opacity-50 mt-0">
+            <div class="row">
+                <div class="col fw-bold">
+                    <span th:text="#{createTeacher.day}"></span>
+                </div>
+                <div class="col fw-bold px-0">
+                    <span th:text="#{createTeacher.startTime}"></span>
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{createTeacher.endTime}"></span>
+                </div>
+                <div class="col flex-grow-0 px-4"></div>
+            </div>
+            <th:block th:each="freeTime,rowStat : ${createTeacherData.teacherFreeTime}">
+                <div class="row mt-2">
+                    <div class="col">
+                        <select class="form-select free-time-day" th:field="*{teacherFreeTime[__${rowStat.index}__].day}" disabled="disabled">
+                            <option th:each="day,rowStatDay : ${dayOfWeek}"
+                                    th:value="${rowStatDay.index + 1}"
+                                    th:text="${day}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <input type="time" class="form-control free-start-time" th:field="*{teacherFreeTime[__${rowStat.index}__].startTime}" readonly="readonly"/>
+                    </div>
+                    <div class="col">
+                        <input type="time" class="form-control free-end-time" th:field="*{teacherFreeTime[__${rowStat.index}__].endTime}" readonly="readonly"/>
+                    </div>
+                    <div class="col flex-grow-0">
+                        <button type="button" class="btn btn-danger remove-free-time"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            </th:block>
+            <div class="row mt-2 empty-free-time">
+                <div class="col">
+                    <select class="form-select free-time-day" th:name="'teacherFreeTime[' + ${#lists.size(createTeacherData.teacherFreeTime)} + '].day'">
+                        <option th:each="day,rowStatDay : ${dayOfWeek}"
+                                th:value="${rowStatDay.index + 1}"
+                                th:text="${day}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="time" class="form-control free-start-time" th:name="'teacherFreeTime[' + ${#lists.size(createTeacherData.teacherFreeTime)} + '].startTime'"/>
+                    <p class="text-danger font-italic mb-0 d-none start-time-validation" th:text="#{createTeacher.startFreeTimeEmptyValidation}"></p>
+                </div>
+                <div class="col">
+                    <input type="time" class="form-control free-end-time" th:name="'teacherFreeTime[' + ${#lists.size(createTeacherData.teacherFreeTime)} + '].endTime'"/>
+                    <p class="text-danger font-italic mb-0 d-none end-time-validation" th:text="#{createTeacher.endFreeTimeEmptyValidation}"></p>
+                    <p class="text-danger font-italic mb-0 d-none end-time-before-validation" th:text="#{createTeacher.endTimeBeforeStartTimeValidation}"></p>
+                </div>
+                <div class="col flex-grow-0">
+                    <button type="button" class="btn btn-success"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="button-holder d-flex justify-content-center my-4">
+            <button type="submit" class="btn btn-outline-success create-teacher w-50 fw-bold" th:text="#{createTeacher.create}"></button>
+        </div>
+    </form>
+    <th:block th:include="~{teacher/list}"/>
+    <script th:src="@{/js/teacherCreate.js}"></script>
+</th:block>

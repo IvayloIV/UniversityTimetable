@@ -3,7 +3,7 @@
 --changeset ivaylo_ivanov:1
 CREATE TABLE university_user (
     id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL,
     password CHAR(60) NOT NULL,
     role VARCHAR(31) NOT NULL,
     created_date TIMESTAMP NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE teacher (
     first_name_en VARCHAR(63) NOT NULL,
     last_name_bg VARCHAR(63) NOT NULL,
     last_name_en VARCHAR(63) NOT NULL,
-    ucn CHAR(10) NOT NULL UNIQUE,
+    ucn CHAR(10) NOT NULL,
     archived BOOLEAN NOT NULL DEFAULT FALSE,
     user_id BIGINT NOT NULL UNIQUE,
     FOREIGN KEY (user_id) REFERENCES university_user (id)
@@ -41,7 +41,7 @@ CREATE TABLE teacher_free_time (
     day VARCHAR(15) NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
-    teacher_id BIGINT NOT NULL UNIQUE,
+    teacher_id BIGINT NOT NULL,
     FOREIGN KEY (teacher_id) REFERENCES teacher (id)
 );
 

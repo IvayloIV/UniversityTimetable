@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/webjars/**", "/js/**").permitAll()
                 .antMatchers("/user/login").anonymous()
-//                .antMatchers("/user/list", "/user/register").hasAuthority("ADMIN")
+                .antMatchers("/teacher/create").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
             .and()
                 .formLogin()

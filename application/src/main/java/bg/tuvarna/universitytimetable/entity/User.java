@@ -22,10 +22,10 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "password", nullable = false, length = 60)
@@ -41,6 +41,9 @@ public class User implements UserDetails {
 
     @Column(name = "password_updated_date")
     private LocalDateTime passwordUpdatedDate;
+
+    @OneToOne(mappedBy = "user")
+    private Teacher teacher;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

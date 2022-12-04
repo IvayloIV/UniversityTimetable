@@ -1,4 +1,4 @@
-package bg.tuvarna.universitytimetable.utils;
+package bg.tuvarna.universitytimetable.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

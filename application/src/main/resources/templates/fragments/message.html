@@ -1,7 +1,7 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="message">
     <div class="toast text-white bg-primary border-0 position-fixed top-0 end-0 m-5" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
         <div class="d-flex">
-            <div class="toast-body flex-grow-1">
+            <div class="toast-body flex-grow-1 pe-0">
                 <th:block th:if="${(param.loginError != null) and (param.loginError[0] == 'true')}" th:text="#{loginUser.badCredentials}"/>
                 <th:block th:if="${message != null}" th:text="${message}"/>
             </div>

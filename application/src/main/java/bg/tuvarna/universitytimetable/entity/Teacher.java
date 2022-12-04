@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -12,7 +13,7 @@ import javax.persistence.*;
 public class Teacher {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "academic_rank_bg", nullable = false, length = 63)
@@ -33,13 +34,16 @@ public class Teacher {
     @Column(name = "last_name_en", nullable = false, length = 63)
     private String lastNameEn;
 
-    @Column(name = "ucn", nullable = false, unique = true, length = 10)
+    @Column(name = "ucn", nullable = false, length = 10)
     private String ucn;
 
     @Column(name = "archived", nullable = false)
     private Boolean archived;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+    private List<TeacherFreeTime> teacherFreeTime;
 }

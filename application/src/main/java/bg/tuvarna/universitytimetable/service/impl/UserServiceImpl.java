@@ -6,7 +6,7 @@ import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.UserMapper;
 import bg.tuvarna.universitytimetable.repository.UserRepository;
 import bg.tuvarna.universitytimetable.service.UserService;
-import bg.tuvarna.universitytimetable.utils.ResourceBundleUtil;
+import bg.tuvarna.universitytimetable.util.ResourceBundleUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -14,7 +14,7 @@ import java.time.LocalTime;
 public class TeacherFreeTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -27,7 +27,7 @@ public class TeacherFreeTime {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "teacher_id", referencedColumnName = "id", nullable = false)
     private Teacher teacher;
 }

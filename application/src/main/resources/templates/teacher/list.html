@@ -1,0 +1,31 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="teacherList">
+    <hr class="hr-2 border-top border-secondary border-2 mt-5 mb-4 opacity-100">
+    <h1 class="text-center" th:text="#{teacherList.title}"></h1>
+    <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50">
+    <table class="table table-striped w-75 mx-auto border-top border-1 mt-4 mb-5">
+        <tbody class="align-middle">
+            <tr>
+                <th scope="col" th:text="#{teacherList.email}"></th>
+                <th scope="col" th:text="#{teacherList.ucn}"></th>
+                <th scope="col" th:text="#{teacherList.academicRank}"></th>
+                <th scope="col" th:text="#{teacherList.firstName}"></th>
+                <th scope="col" th:text="#{teacherList.lastName}"></th>
+                <th scope="col" th:text="#{teacherList.updatedPassword}"></th>
+                <th scope="col"></th>
+            </tr>
+            <tr th:each="teacherList: ${teacherListData}" th:object="${teacherList}">
+                <td th:text="*{email}"></td>
+                <td th:text="*{ucn}"></td>
+                <td th:text="*{academicRank}"></td>
+                <td th:text="*{firstName}"></td>
+                <td th:text="*{lastName}"></td>
+                <td th:text="*{passwordUpdate != null} ? *{{passwordUpdate}} : '-'"></td>
+                <td>
+                    <form th:action="@{/teacher/delete/{teacherId}(teacherId=*{id})}" th:method="POST">
+                        <button type="submit" class="btn btn-danger" th:text="#{teacherList.delete}"></button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</th:block>
