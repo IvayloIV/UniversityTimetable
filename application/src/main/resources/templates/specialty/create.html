@@ -1,0 +1,62 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="createSpecialty">
+    <h1 class="text-center text-dark mt-4" th:text="#{createSpecialty.title}"></h1>
+    <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50 mb-5">
+    <form class="form mx-auto w-75" id="specialty-create-form" th:action="@{/specialty/create}" th:method="POST" th:object="${createSpecialtyData}">
+        <div class="form-group my-3">
+            <div class="row">
+                <div class="col-1 fw-bold" style="width: 12%;">
+                    <span th:text="#{createSpecialty.faculty} + ':'"></span>
+                </div>
+                <div class="col">
+                    <select class="form-select faculty-select" th:field="*{facultyId}">
+                        <option th:each="faculty : ${facultyList}"
+                                th:value="${faculty.id}"
+                                th:text="${faculty.nameBg}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-1 fw-bold" style="width: 20%;">
+                    <span th:text="#{createSpecialty.department} + ':'"></span>
+                </div>
+                <div class="col">
+                    <input id="department-id" type="hidden" th:value="*{departmentId}">
+                    <select class="form-select department-select" th:field="*{departmentId}">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group my-3">
+            <div class="row">
+                <div class="col-1 fw-bold" style="width: 12%;">
+                    <span th:text="#{createSpecialty.nameBg} + ':'"></span>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" id="nameBg"
+                           th:field="*{nameBg}"/>
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('nameBg')}"
+                       th:each="error : ${#fields.errors('nameBg')}"
+                       th:text="${error}"></p>
+                </div>
+                <div class="col-1 fw-bold" style="width: 20%;">
+                    <span th:text="#{createSpecialty.nameEn} + ':'"></span>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" id="nameEn"
+                           th:field="*{nameEn}"/>
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('nameEn')}"
+                       th:each="error : ${#fields.errors('nameEn')}"
+                       th:text="${error}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="button-holder d-flex justify-content-center my-4">
+            <button type="submit" class="btn btn-outline-success create-specialty w-50 fw-bold" th:text="#{createSpecialty.add}"></button>
+        </div>
+    </form>
+    <div class="specialty-list-wrapper">
+        <th:block th:include="~{specialty/list}"/>
+    </div>
+    <script th:src="@{/js/specialtyCreate.js}"></script>
+</th:block>

@@ -19,10 +19,10 @@ public class Specialty {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name_bg", nullable = false, unique = true)
+    @Column(name = "name_bg", nullable = false)
     private String nameBg;
 
-    @Column(name = "name_en", nullable = false, unique = true)
+    @Column(name = "name_en", nullable = false)
     private String nameEn;
 
     @CreatedDate

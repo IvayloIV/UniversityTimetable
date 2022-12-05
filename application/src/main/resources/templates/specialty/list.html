@@ -1,0 +1,17 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="specialtyList">
+    <hr class="hr-2 border-top border-secondary border-2 mt-5 mb-4 opacity-100">
+    <h1 class="text-center mt-5" th:text="#{specialtyList.title}"></h1>
+    <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50">
+    <input type="hidden" class="delete-button-text" th:value="#{specialtyList.delete}">
+    <table class="table table-striped w-75 mx-auto border-top border-1 mt-4" style="margin-bottom: 3.5rem;">
+        <tbody class="align-middle specialties-body">
+            <tr>
+                <th scope="col" th:text="#{createSpecialty.faculty}"></th>
+                <th scope="col" th:text="#{createSpecialty.department}"></th>
+                <th scope="col" th:text="#{createSpecialty.nameBg}"></th>
+                <th scope="col" th:text="#{createSpecialty.createdDate}"></th>
+                <th scope="col"></th>
+            </tr>
+        </tbody>
+    </table>
+</th:block>

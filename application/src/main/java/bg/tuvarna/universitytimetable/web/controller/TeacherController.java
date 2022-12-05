@@ -1,7 +1,7 @@
 package bg.tuvarna.universitytimetable.web.controller;
 
 import bg.tuvarna.universitytimetable.dto.data.CreateTeacherData;
-import bg.tuvarna.universitytimetable.dto.model.TeacherListData;
+import bg.tuvarna.universitytimetable.dto.model.TeacherListModel;
 import bg.tuvarna.universitytimetable.service.TeacherService;
 import bg.tuvarna.universitytimetable.util.DayOfWeekUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +29,8 @@ public class TeacherController extends BaseController {
         return DayOfWeekUtil.getLocaleDays();
     }
 
-    @ModelAttribute("teacherListData")
-    public List<TeacherListData> teacherListData() {
+    @ModelAttribute("teacherListModel")
+    public List<TeacherListModel> teacherListModel() {
         return teacherService.getList();
     }
 
@@ -52,7 +52,7 @@ public class TeacherController extends BaseController {
     }
 
     @PostMapping("/delete/{id}")
-    public ModelAndView createTeacher(@PathVariable Long id) {
+    public ModelAndView deleteTeacher(@PathVariable Long id) {
         teacherService.delete(id);
         return redirect("/teacher/create");
     }

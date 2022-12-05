@@ -4,18 +4,15 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Data
-public class TeacherListData {
+public class SpecialtyListModel {
 
     private Long id;
-    private String email;
-    private String ucn;
-    private String academicRank;
-    private String firstName;
-    private String lastName;
+    private String facultyName;
+    private String departmentName;
+    private String specialtyName;
 
     @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm")
-    private LocalDateTime passwordUpdate;
+    private LocalDateTime createdDate;
 }

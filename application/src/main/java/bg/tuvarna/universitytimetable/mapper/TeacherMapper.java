@@ -2,7 +2,7 @@ package bg.tuvarna.universitytimetable.mapper;
 
 import bg.tuvarna.universitytimetable.dto.data.CreateTeacherData;
 import bg.tuvarna.universitytimetable.dto.data.TeacherFreeTimeData;
-import bg.tuvarna.universitytimetable.dto.model.TeacherListData;
+import bg.tuvarna.universitytimetable.dto.model.TeacherListModel;
 import bg.tuvarna.universitytimetable.entity.Teacher;
 import bg.tuvarna.universitytimetable.entity.TeacherFreeTime;
 import bg.tuvarna.universitytimetable.entity.enums.Role;
@@ -35,7 +35,7 @@ public abstract class TeacherMapper {
     @Mapping(target = "day", expression = "java(DayOfWeek.of(createTeacherData.getDay()))")
     public abstract TeacherFreeTime modelToEntity(TeacherFreeTimeData createTeacherData);
 
-    public abstract List<TeacherListData> entityToModel(List<Teacher> teacher);
+    public abstract List<TeacherListModel> entityToModel(List<Teacher> teacher);
 
     @Mappings({
         @Mapping(source = "teacher.user.email", target = "email"),
@@ -45,5 +45,5 @@ public abstract class TeacherMapper {
         @Mapping(source = "lastNameBg", target = "lastName"),
         @Mapping(source = "teacher.user.passwordUpdatedDate", target = "passwordUpdate"),
     })
-    public abstract TeacherListData entityToModel(Teacher teacher);
+    public abstract TeacherListModel entityToModel(Teacher teacher);
 }

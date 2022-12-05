@@ -13,7 +13,7 @@
                 <th scope="col" th:text="#{teacherList.updatedPassword}"></th>
                 <th scope="col"></th>
             </tr>
-            <tr th:each="teacherList: ${teacherListData}" th:object="${teacherList}">
+            <tr th:each="teacherList: ${teacherListModel}" th:object="${teacherList}">
                 <td th:text="*{email}"></td>
                 <td th:text="*{ucn}"></td>
                 <td th:text="*{academicRank}"></td>

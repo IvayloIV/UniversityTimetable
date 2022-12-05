@@ -78,8 +78,8 @@ ALTER TABLE room ADD CONSTRAINT number_en_length_check CHECK (length(number_en) 
 
 CREATE TABLE specialty (
     id BIGSERIAL PRIMARY KEY,
-    name_bg VARCHAR(255) NOT NULL UNIQUE,
-    name_en VARCHAR(255) NOT NULL UNIQUE,
+    name_bg VARCHAR(255) NOT NULL,
+    name_en VARCHAR(255) NOT NULL,
     created_date TIMESTAMP NOT NULL,
     archived BOOLEAN NOT NULL DEFAULT FALSE,
     department_id BIGINT NOT NULL,

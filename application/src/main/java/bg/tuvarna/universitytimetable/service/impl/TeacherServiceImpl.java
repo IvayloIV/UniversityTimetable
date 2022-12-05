@@ -2,7 +2,7 @@ package bg.tuvarna.universitytimetable.service.impl;
 
 import bg.tuvarna.universitytimetable.dto.data.CreateTeacherData;
 import bg.tuvarna.universitytimetable.dto.data.TeacherFreeTimeData;
-import bg.tuvarna.universitytimetable.dto.model.TeacherListData;
+import bg.tuvarna.universitytimetable.dto.model.TeacherListModel;
 import bg.tuvarna.universitytimetable.entity.Teacher;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.TeacherMapper;
@@ -76,7 +76,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<TeacherListData> getList() {
+    public List<TeacherListModel> getList() {
         List<Teacher> teachers = teacherRepository.findAllByArchivedFalse();
         return teacherMapper.entityToModel(teachers);
     }
@@ -93,7 +93,7 @@ public class TeacherServiceImpl implements TeacherService {
         String message = resourceBundleUtil.getMessage(messageKey);
         Map<String, Object> models = Map.of("createTeacherData", createTeacherData,
                 "dayOfWeek", DayOfWeekUtil.getLocaleDays(),
-                "teacherListData", getList());
+                "teacherListModel", getList());
         throw new ValidationException(message, "teacher/create", models);
     }
 }
