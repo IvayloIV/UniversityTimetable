@@ -22,8 +22,13 @@ public class SpecialtyRestController {
         this.specialtyService = specialtyService;
     }
 
-    @GetMapping("/faculty/{facultyId}/department/{departmentId}")
-    public List<SpecialtyListModel> getList(@PathVariable Long facultyId, @PathVariable Long departmentId) {
-        return specialtyService.getList(facultyId, departmentId);
+    @GetMapping("/{id}")
+    public SpecialtyListModel getById(@PathVariable Long id) {
+        return specialtyService.getById(id);
+    }
+
+    @GetMapping("/department/{departmentId}")
+    public List<SpecialtyListModel> getList(@PathVariable Long departmentId) {
+        return specialtyService.getList(departmentId);
     }
 }

@@ -3,6 +3,7 @@ package bg.tuvarna.universitytimetable.entity;
 import bg.tuvarna.universitytimetable.entity.enums.CourseMode;
 import bg.tuvarna.universitytimetable.entity.enums.CourseYear;
 import bg.tuvarna.universitytimetable.entity.enums.Degree;
+import bg.tuvarna.universitytimetable.entity.enums.CourseWeek;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,14 +20,33 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "degree", nullable = false)
     private Degree degree;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "year", nullable = false)
     private CourseYear year;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "mode", nullable = false)
     private CourseMode mode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "week", nullable = false)
+    private CourseWeek week;
+
+    @Column(name = "start_week")
+    private Short startWeek;
+
+    @Column(name = "end_week")
+    private Short endWeek;
+
+    @Column(name = "hours_per_week", nullable = false)
+    private Short hoursPerWeek;
+
+    @Column(name = "meetings_per_week", nullable = false)
+    private Short meetingsPerWeek;
 
     @Column(name = "active", nullable = false)
     private Boolean active;
@@ -50,7 +70,7 @@ public class Course {
     @JoinColumn(name = "subject_id", referencedColumnName = "id", nullable = false)
     private Subject subject;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "course_group",
         joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "id"))

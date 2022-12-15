@@ -11,5 +11,7 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface DepartmentMapper {
 
+    DepartmentListModel entityToModel(Department departments);
+
     List<DepartmentListModel> entityToModel(List<Department> departments);
 }

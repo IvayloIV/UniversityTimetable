@@ -1,5 +1,7 @@
 package bg.tuvarna.universitytimetable.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,8 +12,10 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "university_group")
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Group {
 
@@ -19,7 +23,7 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 15)
+    @Column(name = "name", nullable = false, unique = true, length = 15)
     private String name;
 
     @CreatedDate

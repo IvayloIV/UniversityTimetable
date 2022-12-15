@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface SpecialtyService {
 
-    List<SpecialtyListModel> getList(Long facultyId, Long departmentId);
+    SpecialtyListModel getById(Long specialtyId);
+
+    List<SpecialtyListModel> getList(Long departmentId);
 
     boolean createSpecialty(CreateSpecialtyData createSpecialtyData, BindingResult bindingResult);
 

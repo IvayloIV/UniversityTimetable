@@ -1,0 +1,50 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="createSubject">
+    <h1 class="text-center text-dark mt-4" th:text="#{createSubject.title}"></h1>
+    <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50 mb-5">
+    <form class="form mx-auto w-75" id="subject-create-form" th:action="@{/subject/create}" th:method="POST" th:object="${createSubjectData}">
+        <div class="form-group my-3">
+            <div class="row">
+                <div class="col fw-bold">
+                    <span th:text="#{createSubject.nameBg} + ':'"></span>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control"
+                           th:field="*{nameBg}">
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('nameBg')}"
+                       th:each="error : ${#fields.errors('nameBg')}"
+                       th:text="${error}"></p>
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{createSubject.nameEn} + ':'"></span>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control"
+                           th:field="*{nameEn}">
+                    <p class="text-danger font-italic mb-0"
+                       th:if="${#fields.hasErrors('nameEn')}"
+                       th:each="error : ${#fields.errors('nameEn')}"
+                       th:text="${error}"></p>
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{createSubject.type} + ':'"></span>
+                </div>
+                <div class="col">
+                    <select class="form-select" th:field="*{type}">
+                        <option th:each="subjectType : ${subjectTypes}"
+                                th:value="${subjectType.name}"
+                                th:text="${@resourceBundleUtil.getMessage(subjectType.key)}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="course-form-wrapper">
+            <th:block th:include="~{subject/courseForm}"/>
+        </div>
+        <div class="button-holder d-flex justify-content-center my-4">
+            <button type="submit" class="btn btn-outline-success create-specialty w-50 fw-bold" th:text="#{createSubject.create}"></button>
+        </div>
+    </form>
+    <script th:src="@{/js/subjectCreate.js}"></script>
+</th:block>

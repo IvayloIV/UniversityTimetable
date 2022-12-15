@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface DepartmentService {
 
+    DepartmentListModel getById(Long departmentId);
+
     List<DepartmentListModel> getList(Long facultyId);
 }

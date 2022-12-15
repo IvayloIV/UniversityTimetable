@@ -21,6 +21,11 @@ public class DepartmentRestController {
         this.departmentService = departmentService;
     }
 
+    @GetMapping("/{id}")
+    public DepartmentListModel getById(@PathVariable Long id) {
+        return departmentService.getById(id);
+    }
+
     @GetMapping("/faculty/{id}")
     public List<DepartmentListModel> getList(@PathVariable Long id) {
         return departmentService.getList(id);

@@ -50,6 +50,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor());
         registry.addInterceptor(passwordUpdateInterceptor)
                 .excludePathPatterns("/user/**", "/webjars/**", "/js/**", "/department/faculty/{id}",
-                        "/faculty/{facultyId}/department/{departmentId}");
+                        "/specialty/department/{departmentId}");
     }
 }

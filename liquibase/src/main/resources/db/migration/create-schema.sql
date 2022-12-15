@@ -91,26 +91,15 @@ ALTER TABLE specialty ADD CONSTRAINT name_en_length_check CHECK (length(name_en)
 
 CREATE TABLE subject (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE,
-    abbreviation_bg VARCHAR(63) NOT NULL UNIQUE,
-    abbreviation_en VARCHAR(63) NOT NULL UNIQUE,
+    name_bg VARCHAR(63) NOT NULL,
+    name_en VARCHAR(63) NOT NULL,
     type VARCHAR(31) NOT NULL,
-    week VARCHAR(15) NOT NULL,
-    start_week SMALLINT,
-    end_week SMALLINT,
-    hours_per_week SMALLINT NOT NULL,
-    meetings_per_week SMALLINT NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
     archived BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-ALTER TABLE subject ADD CONSTRAINT name_length_check CHECK (length(name) > 3);
-ALTER TABLE subject ADD CONSTRAINT abbreviation_bg_length_check CHECK (length(abbreviation_bg) >= 1);
-ALTER TABLE subject ADD CONSTRAINT abbreviation_en_length_check CHECK (length(abbreviation_en) >= 1);
-ALTER TABLE subject ADD CONSTRAINT start_week_check CHECK (start_week >= 1);
-ALTER TABLE subject ADD CONSTRAINT end_week_check CHECK (end_week > start_week);
-ALTER TABLE subject ADD CONSTRAINT hours_per_week_check CHECK (hours_per_week >= 1);
-ALTER TABLE subject ADD CONSTRAINT meetings_per_week_check CHECK (meetings_per_week >= 1);
+ALTER TABLE subject ADD CONSTRAINT name_bg_length_check CHECK (length(name_bg) >= 1);
+ALTER TABLE subject ADD CONSTRAINT name_en_length_check CHECK (length(name_en) >= 1);
 
 CREATE TABLE course (
     id BIGSERIAL PRIMARY KEY,
@@ -118,6 +107,11 @@ CREATE TABLE course (
     specialty_id BIGINT NOT NULL,
     year VARCHAR(63) NOT NULL,
     mode VARCHAR(31) NOT NULL,
+    week VARCHAR(15) NOT NULL,
+    start_week SMALLINT,
+    end_week SMALLINT,
+    hours_per_week SMALLINT NOT NULL,
+    meetings_per_week SMALLINT NOT NULL,
     teacher_id BIGINT NOT NULL,
     room_id BIGINT NOT NULL,
     subject_id BIGINT NOT NULL,
@@ -128,6 +122,11 @@ CREATE TABLE course (
     FOREIGN KEY (room_id) REFERENCES room (id),
     FOREIGN KEY (subject_id) REFERENCES subject (id)
 );
+
+ALTER TABLE course ADD CONSTRAINT start_week_check CHECK (start_week >= 1);
+ALTER TABLE course ADD CONSTRAINT end_week_check CHECK (end_week = null or end_week > start_week);
+ALTER TABLE course ADD CONSTRAINT hours_per_week_check CHECK (hours_per_week >= 1);
+ALTER TABLE course ADD CONSTRAINT meetings_per_week_check CHECK (meetings_per_week >= 1);
 
 CREATE TABLE course_time (
     id BIGSERIAL PRIMARY KEY,
@@ -142,7 +141,7 @@ ALTER TABLE course_time ADD CONSTRAINT end_time_check CHECK (end_time > start_ti
 
 CREATE TABLE university_group (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(15) NOT NULL,
+    name VARCHAR(15) NOT NULL UNIQUE,
     created_date TIMESTAMP NOT NULL
 );
 

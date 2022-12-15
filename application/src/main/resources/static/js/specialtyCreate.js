@@ -31,10 +31,9 @@ $(window).on('load', () => {
     }
 
     function loadSpecialties() {
-        var facultyId = facultySelect.find(":selected").val();
         var departmentId = departmentSelect.find(":selected").val();
 
-        $.get(`/specialty/faculty/${facultyId}/department/${departmentId}`)
+        $.get(`/specialty/department/${departmentId}`)
             .then((res) => {
                     $('.specialty-row').remove();
 

@@ -1,11 +1,11 @@
 package bg.tuvarna.universitytimetable.entity;
 
 import bg.tuvarna.universitytimetable.entity.enums.SubjectType;
-import bg.tuvarna.universitytimetable.entity.enums.SubjectWeek;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,38 +17,22 @@ public class Subject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
+    @Column(name = "name_bg", nullable = false, length = 63)
+    private String nameBg;
 
-    @Column(name = "abbreviation_bg", nullable = false, unique = true, length = 63)
-    private String abbreviationBg;
-
-    @Column(name = "abbreviation_en", nullable = false, unique = true, length = 63)
-    private String abbreviationEn;
+    @Column(name = "name_en", nullable = false, length = 63)
+    private String nameEn;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private SubjectType type;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "week", nullable = false)
-    private SubjectWeek week;
-
-    @Column(name = "start_week")
-    private Short startWeek;
-
-    @Column(name = "end_week")
-    private Short endWeek;
-
-    @Column(name = "hours_per_week", nullable = false)
-    private Short hoursPerWeek;
-
-    @Column(name = "meetings_per_week", nullable = false)
-    private Short meetingsPerWeek;
 
     @Column(name = "active", nullable = false)
     private Boolean active;
 
     @Column(name = "archived", nullable = false)
     private Boolean archived;
+
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
+    private List<Course> courses;
 }

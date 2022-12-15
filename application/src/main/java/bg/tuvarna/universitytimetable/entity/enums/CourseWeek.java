@@ -1,13 +1,14 @@
 package bg.tuvarna.universitytimetable.entity.enums;
 
-public enum CourseMode {
+public enum CourseWeek {
 
-    FULL_TIME("courseMode.fullTime"),
-    PART_TIME("courseMode.partTime");
+    ALL("courseWeek.all"),
+    EVEN("courseWeek.even"),
+    ODD("courseWeek.odd");
 
     private final String key;
 
-    CourseMode(String key) {
+    CourseWeek(String key) {
         this.key = key;
     }
 

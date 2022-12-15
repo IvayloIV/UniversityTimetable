@@ -42,8 +42,16 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     }
 
     @Override
-    public List<SpecialtyListModel> getList(Long facultyId, Long departmentId) {
-        List<Specialty> specialties = specialtyRepository.findByFacultyAndDepartment(facultyId, departmentId);
+    public SpecialtyListModel getById(Long specialtyId) {
+        Specialty specialty = specialtyRepository.findByIdAndArchivedFalse(specialtyId)
+            .orElseThrow(() -> new IllegalArgumentException(
+                    resourceBundleUtil.getMessage("createCourse.specialtyNotFound")));
+        return specialtyMapper.entityToModel(specialty);
+    }
+
+    @Override
+    public List<SpecialtyListModel> getList(Long departmentId) {
+        List<Specialty> specialties = specialtyRepository.findByDepartmentId(departmentId);
         return specialtyMapper.entityToModel(specialties);
     }
 

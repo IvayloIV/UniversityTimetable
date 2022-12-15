@@ -82,8 +82,6 @@ $(window).on('load', () => {
     }
 
     function updateInputNames(index, item) {
-        console.log(index);
-        console.log(item);
         $(item).find('.free-time-day').attr('name', `teacherFreeTime[${index}].day`);
         $(item).find('.free-start-time').attr('name', `teacherFreeTime[${index}].startTime`);
         $(item).find('.free-end-time').attr('name', `teacherFreeTime[${index}].endTime`);
