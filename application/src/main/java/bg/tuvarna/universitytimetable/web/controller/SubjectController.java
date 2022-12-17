@@ -9,6 +9,7 @@ import bg.tuvarna.universitytimetable.service.FacultyService;
 import bg.tuvarna.universitytimetable.service.RoomService;
 import bg.tuvarna.universitytimetable.service.SubjectService;
 import bg.tuvarna.universitytimetable.service.TeacherService;
+import bg.tuvarna.universitytimetable.util.DayOfWeekUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -78,24 +79,14 @@ public class SubjectController extends BaseController {
         return teacherService.getList();
     }
 
+    @ModelAttribute("dayOfWeek")
+    public String[] dayOfWeek() {
+        return DayOfWeekUtil.getLocaleDays();
+    }
+
     @GetMapping("/create")
     public ModelAndView createSubject(ModelAndView modelAndView) {
         CreateSubjectData createSubjectData = new CreateSubjectData();
-//        CreateCourseData createCourseData = new CreateCourseData();
-//        createCourseData.setTeacherId(1L);
-//        createCourseData.setYear(CourseYear.II);
-//        createCourseData.setRoomId(1L);
-//        createCourseData.setWeek(CourseWeek.EVEN);
-//        createCourseData.setMode(CourseMode.FULL_TIME);
-//        createCourseData.setDegree(Degree.MASTER_BG_2_5);
-//        createCourseData.setSpecialtyId(1L);
-//        createCourseData.setFacultyId(1L);
-//        createCourseData.setDepartmentId(1L);
-//        createCourseData.setStartWeek((short) 1);
-//        createCourseData.setEndWeek((short) 1);
-//        createCourseData.setMeetingsPerWeek((short) 1);
-//        createCourseData.setHoursPerWeek((short) 1);
-//        createCourseData.setGroups(List.of("Test1", "Test2", "Test3"));
         createSubjectData.setCourses(List.of(/*createCourseData*/));
         modelAndView.addObject("createSubjectData", createSubjectData);
         return view("subject/create", modelAndView);

@@ -44,7 +44,7 @@ $(window).on('load', () => {
         }
 
         var groupsWrapper = $(rows).find('.groups-wrapper');
-        $('<span>').addClass('d-flex ms-3')
+        $('<span>').addClass('d-flex me-3')
             .append($('<input>').addClass('form-control group').attr('readonly', 'readonly').attr('style', 'width:50px;').val(value))
             .append($('<button>').attr('type', 'button').addClass('btn bg-danger text-white fw-bold remove-group ms-1').on('click', removeGroup)
                 .append($('<i>').addClass('fa-solid fa-trash'))).insertBefore($(currentGroup));

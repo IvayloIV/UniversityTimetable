@@ -1,7 +1,7 @@
 $(window).on('load', () => {
     var newCourseWrapperCloning = $('.new-course-wrapper').clone();
     $('.create-course').on('click', addNewCourse);
-    $('.fa-circle-xmark').on('click', removeCourse);
+    $('.remove-course').on('click', removeCourse);
 
     var departmentIdInputs = $(".department-id");
     departmentIdInputs.each((i, e) => {
@@ -36,6 +36,8 @@ $(window).on('load', () => {
         addButton.blur();
 
         var newCourseWrapper = addButton.closest('.new-course-wrapper');
+        var createGroupHandler = $._data(newCourseWrapper.find('.create-group').get(0), "events").click[0].handler;
+        var addCourseHandler = $._data(newCourseWrapper.find('.add-course-time').get(0), "events").click[0].handler;
         var degreeSelect = $(newCourseWrapper).find('.degree-select');
         var modeSelect = $(newCourseWrapper).find('.mode-select');
         var facultySelect = $(newCourseWrapper).find('.faculty-select');
@@ -108,13 +110,16 @@ $(window).on('load', () => {
         hoursPerWeekValidation.remove();
         meetingsPerWeekValidation.remove();
 
-        addButton.parent().remove();
         newCourseWrapper.removeClass('new-course-wrapper');
         newCourseWrapper.addClass('course-wrapper');
-        newCourseWrapper.prepend(
-            $('<div>').addClass('row text-end text-danger h2')
-                .append($('<i>').addClass('fa-solid fa-circle-xmark').attr('role', 'button').on('click', removeCourse))
-        );
+
+        var removeInputText = addButton.parent().find('input');
+        addButton.removeClass('btn-outline-success create-course');
+        addButton.addClass('btn-danger remove-course');
+        addButton.text(removeInputText.val());
+        removeInputText.remove();
+        addButton.unbind('click');
+        addButton.on('click', removeCourse);
 
         newCourseWrapper.find('.remove-group').each((i, e) => e.remove());
         newCourseWrapper.find('.create-group').parent().remove();
@@ -122,16 +127,30 @@ $(window).on('load', () => {
         newCourseWrapper.find('.group-exists-validation').remove();
         var groups = newCourseWrapper.find('.group');
         if (groups.length == 1) {
-            groups[0].closest('.row').remove();
+            groups[0].closest('.groups-flex').remove();
         } else {
             groups[groups.length - 1].remove();
         }
 
+        var courseTimeWrapper = newCourseWrapper.find('.course-time-wrapper');
+        var courseTimes = courseTimeWrapper.find('.course-time');
+        if (courseTimes.length == 1) {
+            courseTimeWrapper.remove();
+        } else {
+            courseTimes[courseTimes.length - 1].remove();
+        }
+
+        courseTimes.each((i, e) => {
+            $(e).find('.remove-course-time').parent().remove();
+        });
+
         var rows = newCourseWrapper.parent();
         var tempNewCourseWrapper = newCourseWrapperCloning.clone();
-        updateNames(rows.children().length - 2, tempNewCourseWrapper);
+        updateNames(rows.children().length - 1, tempNewCourseWrapper);
         rows.append(tempNewCourseWrapper);
         tempNewCourseWrapper.find('.create-course').on('click', addNewCourse);
+        tempNewCourseWrapper.find('.create-group').on('click', createGroupHandler);
+        tempNewCourseWrapper.find('.add-course-time').on('click', addCourseHandler);
         loadDepartments(tempNewCourseWrapper.find('.faculty-select'),
             tempNewCourseWrapper.find('.department-select'),
             tempNewCourseWrapper.find('.specialty-select'));
@@ -141,7 +160,7 @@ $(window).on('load', () => {
         var course = $(e.target).closest('.course-wrapper');
         var coursesWrapper = course.parent();
         course.remove();
-        $(coursesWrapper.children().splice(2)).each(updateNames);
+        $(coursesWrapper.children().splice(1)).each(updateNames);
     }
 
     function updateNames(index, item) {
@@ -163,5 +182,11 @@ $(window).on('load', () => {
         $(item).find('.teacher-select').attr('name', `courses[${index}].teacherId`);
 
         $(item).find('.group').each((i, g) => $(g).attr('name', `courses[${index}].groups[${i}]`));
+
+        $(item).find('.course-time').each((i, ct) => {
+            $(ct).find('.course-time-day').attr('name', `courses[${index}].courseTimes[${i}].day`);
+            $(ct).find('.course-start-time').attr('name', `courses[${index}].courseTimes[${i}].startTime`);
+            $(ct).find('.course-end-time').attr('name', `courses[${index}].courseTimes[${i}].endTime`);
+        });
     }
 });

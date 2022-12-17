@@ -25,4 +25,5 @@ public class CreateCourseData {
     private Short meetingsPerWeek;
     private Long teacherId;
     private List<String> groups;
+    private List<CourseTimeData> courseTimes;
 }

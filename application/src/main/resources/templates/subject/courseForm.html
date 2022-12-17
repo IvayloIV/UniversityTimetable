@@ -1,16 +1,12 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="courseForm">
     <div class="form-group my-3">
-        <h3 class="text-dark" th:text="#{createCourse.title}"></h3>
-        <hr class="hr-2 border-top border-primary border-2 mx-auto opacity-50 mt-0">
-        <div class="course-wrapper" th:each="course,rowStat : ${createSubjectData.courses}">
-            <div class="row text-end text-danger h2">
-                <i role="button" class="fa-solid fa-circle-xmark"></i>
-            </div>
-            <div class="row">
+        <h3 class="text-dark mt-4" th:text="#{createCourse.title}"></h3>
+        <div class="course-wrapper border border-2 border-primary rounded px-3 py-4 mb-3" th:each="course,rowStat : ${createSubjectData.courses}" style="border-color:#0d6efd70!important;">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.degree} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select degree-select" th:field="*{courses[__${rowStat.index}__].degree}" disabled="disabled">
                         <option th:each="degree : ${degrees}"
                                 th:value="${degree.name}"
@@ -21,7 +17,7 @@
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.mode} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select mode-select" th:field="*{courses[__${rowStat.index}__].mode}" disabled="disabled">
                         <option th:each="courseMode : ${courseModes}"
                                 th:value="${courseMode.name}"
@@ -30,11 +26,11 @@
                     </select>
                 </div>
             </div>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.faculty} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col col-4">
                     <select class="form-select faculty-select-disabled" th:field="*{courses[__${rowStat.index}__].facultyId}" disabled="disabled">
                         <option th:each="faculty : ${facultyList}"
                                 th:value="${faculty.id}"
@@ -45,7 +41,7 @@
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.week} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col col-4">
                     <select class="form-select week-select" th:field="*{courses[__${rowStat.index}__].week}" disabled="disabled">
                         <option th:each="courseWeek : ${courseWeeks}"
                                 th:value="${courseWeek.name}"
@@ -54,11 +50,11 @@
                     </select>
                 </div>
             </div>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.department} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col col-4">
                     <input class="department-id" type="hidden" th:value="${course.departmentId}">
                     <select class="form-select department-select-disabled" th:field="*{courses[__${rowStat.index}__].departmentId}" disabled="disabled">
                     </select>
@@ -66,17 +62,17 @@
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.startWeek} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col col-4">
                     <input type="number" class="form-control start-week"
                            th:field="*{courses[__${rowStat.index}__].startWeek}"
                            readonly="readonly"/>
                 </div>
             </div>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.specialty} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col col-4">
                     <input class="specialty-id" type="hidden" th:value="${course.specialtyId}">
                     <select class="form-select specialty-select-disabled" th:field="*{courses[__${rowStat.index}__].specialtyId}" disabled="disabled">
                     </select>
@@ -84,17 +80,17 @@
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.endWeek} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col col-4">
                     <input type="number" class="form-control end-week"
                            th:field="*{courses[__${rowStat.index}__].endWeek}"
                            readonly="readonly"/>
                 </div>
             </div>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.year} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col col-4">
                     <select class="form-select year-select" th:field="*{courses[__${rowStat.index}__].year}" disabled="disabled">
                         <option th:each="courseYear : ${courseYears}"
                                 th:value="${courseYear.name}"
@@ -105,17 +101,17 @@
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.hoursPerWeek} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col col-4">
                     <input type="number" class="form-control hours-per-week"
                            th:field="*{courses[__${rowStat.index}__].hoursPerWeek}"
                            readonly="readonly"/>
                 </div>
             </div>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.room} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col col-4">
                     <select class="form-select room-select" th:field="*{courses[__${rowStat.index}__].roomId}" disabled="disabled">
                         <option th:each="room : ${rooms}"
                                 th:value="${room.id}"
@@ -126,17 +122,17 @@
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.meetingsPerWeek} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col col-4">
                     <input type="number" class="form-control meetings-per-week"
                            th:field="*{courses[__${rowStat.index}__].meetingsPerWeek}"
                            readonly="readonly"/>
                 </div>
             </div>
-            <div class="row">
-                <div class="col fw-bold">
+            <div class="row my-2">
+                <div class="col-2 fw-bold">
                     <span th:text="#{createCourse.teacher} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select teacher-select" th:field="*{courses[__${rowStat.index}__].teacherId}" disabled="disabled">
                         <option th:each="teacher : ${teachers}"
                                 th:value="${teacher.id}"
@@ -147,11 +143,11 @@
             </div>
             <th:block th:with="groups=*{courses[__${rowStat.index}__].groups}">
                 <div class="groups-flex d-flex"  th:if="${groups} != null and ${groups.size} > 0">
-                    <div class="fw-bold">
+                    <div class="col-2 fw-bold">
                         <span th:text="#{createCourse.group} + ':'"></span>
                     </div>
-                    <div class="groups-wrapper d-flex">
-                        <input type="text" class="form-control group ms-3"
+                    <div class="groups-wrapper d-flex ps-1">
+                        <input type="text" class="form-control group me-3"
                                th:each="group, row : ${groups}"
                                th:name="'courses[' + ${rowStat.index} + '].groups[' + ${row.index} + ']'"
                                th:value="${group}"
@@ -160,13 +156,61 @@
                     </div>
                 </div>
             </th:block>
+            <th:block th:with="courseTimes=*{courses[__${rowStat.index}__].courseTimes}">
+                <div class="form-group my-3 course-time-wrapper" th:if="${courseTimes} != null and ${courseTimes.size} > 0">
+                    <h4 class="text-dark mt-4" th:text="#{createCourse.timeTitle}"></h4>
+                    <hr class="hr-2 border-top border-primary border-2 mx-auto opacity-50 mt-0">
+                    <div class="row">
+                        <div class="col fw-bold">
+                            <span th:text="#{createCourse.day} + ':'"></span>
+                        </div>
+                        <div class="col fw-bold px-0">
+                            <span th:text="#{createCourse.startTime} + ':'"></span>
+                        </div>
+                        <div class="col fw-bold">
+                            <span th:text="#{createCourse.endTime} + ':'"></span>
+                        </div>
+                        <div class="col flex-grow-0 px-4"></div>
+                    </div>
+                    <th:block th:each="courseTime,row : ${courseTimes}">
+                        <div class="row mt-2">
+                            <div class="col">
+                                <select class="form-select course-time-day"
+                                        th:name="'courses[' + ${rowStat.index} + '].courseTimes[' + ${row.index} + '].day'"
+                                        th:value="${courseTime.day}"
+                                        disabled="disabled">
+                                    <option th:each="day,rowStatDay : ${dayOfWeek}"
+                                            th:value="${rowStatDay.index + 1}"
+                                            th:text="${day}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <input type="time" class="form-control course-start-time"
+                                       th:name="'courses[' + ${rowStat.index} + '].courseTimes[' + ${row.index} + '].startTime'"
+                                       th:value="${#temporals.format(courseTime.startTime, 'HH:mm')}"
+                                       readonly="readonly"/>
+                            </div>
+                            <div class="col">
+                                <input type="time" class="form-control course-end-time"
+                                       th:name="'courses[' + ${rowStat.index} + '].courseTimes[' + ${row.index} + '].endTime'"
+                                       th:value="${#temporals.format(courseTime.endTime, 'HH:mm')}"
+                                       readonly="readonly"/>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </th:block>
+            <div class="button-holder d-flex justify-content-center mt-4">
+                <button type="button" class="btn btn-danger remove-course fw-bold" th:text="#{createCourse.remove}"></button>
+            </div>
         </div>
-        <div class="new-course-wrapper">
-            <div class="row">
+        <div class="new-course-wrapper border border-2 border-primary rounded px-3 py-4 mb-3" style="border-color:#0d6efd70!important;">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.degree} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select degree-select" th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].degree'">
                         <option th:each="degree : ${degrees}"
                                 th:value="${degree.name}"
@@ -177,7 +221,7 @@
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.mode} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select mode-select" th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].mode'">
                         <option th:each="courseMode : ${courseModes}"
                                 th:value="${courseMode.name}"
@@ -186,11 +230,11 @@
                     </select>
                 </div>
             </div>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.faculty} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select faculty-select" th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].facultyId'">
                         <option th:each="faculty : ${facultyList}"
                                 th:value="${faculty.id}"
@@ -201,7 +245,7 @@
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.week} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select week-select" th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].week'">
                         <option th:each="courseWeek : ${courseWeeks}"
                                 th:value="${courseWeek.name}"
@@ -210,45 +254,45 @@
                     </select>
                 </div>
             </div>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.department} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select department-select" th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].departmentId'">
                     </select>
                 </div>
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.startWeek} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <input type="number" class="form-control start-week"
                            th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].startWeek'"/>
                     <p class="text-danger font-italic mb-0 d-none start-week-validation" th:text="#{createCourse.startWeekPositiveValidation}"></p>
                 </div>
             </div>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.specialty} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select specialty-select" th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].specialtyId'">
                     </select>
                 </div>
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.endWeek} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <input type="number" class="form-control end-week"
                            th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].endWeek'"/>
                     <p class="text-danger font-italic mb-0 d-none end-week-validation" th:text="#{createCourse.endWeekBeforeStartValidation}"></p>
                 </div>
             </div>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.year} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select year-select" th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].year'">
                         <option th:each="courseYear : ${courseYears}"
                                 th:value="${courseYear.name}"
@@ -259,17 +303,17 @@
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.hoursPerWeek} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <input type="number" class="form-control hours-per-week"
                            th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].hoursPerWeek'"/>
                     <p class="text-danger font-italic mb-0 d-none hours-per-week-validation" th:text="#{createCourse.hoursPerWeekPositiveValidation}"></p>
                 </div>
             </div>
-            <div class="row">
+            <div class="row my-2">
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.room} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select room-select" th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].roomId'">
                         <option th:each="room : ${rooms}"
                                 th:value="${room.id}"
@@ -280,17 +324,17 @@
                 <div class="col fw-bold">
                     <span th:text="#{createCourse.meetingsPerWeek} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <input type="number" class="form-control meetings-per-week"
                            th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].meetingsPerWeek'"/>
                     <p class="text-danger font-italic mb-0 d-none meetings-per-week-validation" th:text="#{createCourse.meetingsPerWeekPositiveValidation}"></p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col fw-bold">
+            <div class="row my-2">
+                <div class="col-2 fw-bold">
                     <span th:text="#{createCourse.teacher} + ':'"></span>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <select class="form-select teacher-select" th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].teacherId'">
                         <option th:each="teacher : ${teachers}"
                                 th:value="${teacher.id}"
@@ -300,11 +344,11 @@
                 </div>
             </div>
             <div class="groups-flex d-flex">
-                <div class="fw-bold">
+                <div class="col-2 fw-bold">
                     <span th:text="#{createCourse.group} + ':'"></span>
                 </div>
-                <div class="groups-wrapper d-flex">
-                    <input type="text" class="form-control group ms-3"
+                <div class="groups-wrapper d-flex ps-1">
+                    <input type="text" class="form-control group"
                            th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].groups[0]'"
                            style="width:50px;"/>
                 </div>
@@ -315,15 +359,59 @@
                 </div>
             </div>
             <div>
-                <p class="text-danger font-italic mb-0 d-none empty-group-validation" th:text="#{createCourse.emptyGroupNameValidation}" style="margin-left:4rem;"></p>
-                <p class="text-danger font-italic mb-0 d-none group-exists-validation" th:text="#{createCourse.groupExistsValidation}" style="margin-left:4rem;"></p>
+                <p class="text-danger font-italic mb-0 d-none empty-group-validation" th:text="#{createCourse.emptyGroupNameValidation}" style="margin-left:17%;"></p>
+                <p class="text-danger font-italic mb-0 d-none group-exists-validation" th:text="#{createCourse.groupExistsValidation}" style="margin-left:17%;"></p>
             </div>
-            <div class="button-holder d-flex justify-content-center my-4">
-                <button type="button" class="btn btn-outline-success create-course w-50 fw-bold" th:text="#{createCourse.add}"></button>
+            <div class="form-group my-3 course-time-wrapper">
+                <h4 class="text-dark mt-4" th:text="#{createCourse.timeTitle}"></h4>
+                <hr class="hr-2 border-top border-primary border-2 mx-auto opacity-50 mt-0">
+                <div class="row">
+                    <div class="col fw-bold">
+                        <span th:text="#{createCourse.day} + ':'"></span>
+                    </div>
+                    <div class="col fw-bold px-0">
+                        <span th:text="#{createCourse.startTime} + ':'"></span>
+                    </div>
+                    <div class="col fw-bold">
+                        <span th:text="#{createCourse.endTime} + ':'"></span>
+                    </div>
+                    <div class="col flex-grow-0 px-4"></div>
+                </div>
+                <div class="row mt-2 course-time">
+                    <div class="col">
+                        <select class="form-select course-time-day"
+                                th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].courseTimes[0].day'">
+                            <option th:each="day,rowStatDay : ${dayOfWeek}"
+                                    th:value="${rowStatDay.index + 1}"
+                                    th:text="${day}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <input type="time" class="form-control course-start-time"
+                               th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].courseTimes[0].startTime'"/>
+                            <p class="text-danger font-italic mb-0 d-none start-time-validation" th:text="#{createCourse.startCourseTimeEmptyValidation}"></p>
+                    </div>
+                    <div class="col">
+                        <input type="time" class="form-control course-end-time"
+                               th:name="'courses[' + ${#lists.size(createSubjectData.courses)} + '].courseTimes[0].endTime'"/>
+                        <p class="text-danger font-italic mb-0 d-none end-time-empty-validation" th:text="#{createCourse.endCourseTimeEmptyValidation}"></p>
+                        <p class="text-danger font-italic mb-0 d-none end-time-before-validation" th:text="#{createCourse.endCourseBeforeStartTimeValidation}"></p>
+                        <p class="text-danger font-italic mb-0 d-none end-time-range-validation" th:text="#{createCourse.courseTimeRangeValidation}"></p>
+                    </div>
+                    <div class="col flex-grow-0">
+                        <button type="button" class="btn btn-success add-course-time"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="button-holder d-flex justify-content-center mt-4">
+                <input type="hidden" th:value="#{createCourse.remove}"/>
+                <button type="button" class="btn btn-outline-success create-course fw-bold" th:text="#{createCourse.add}"></button>
             </div>
         </div>
     </div>
     <script th:src="@{/js/specialtyLoader.js}"></script>
-    <script th:src="@{/js/courseCreate.js}"></script>
     <script th:src="@{/js/groupCreate.js}"></script>
+    <script th:src="@{/js/courseTime.js}"></script>
+    <script th:src="@{/js/courseCreate.js}"></script>
 </th:block>

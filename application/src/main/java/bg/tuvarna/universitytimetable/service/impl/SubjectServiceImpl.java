@@ -11,6 +11,7 @@ import bg.tuvarna.universitytimetable.service.FacultyService;
 import bg.tuvarna.universitytimetable.service.RoomService;
 import bg.tuvarna.universitytimetable.service.SubjectService;
 import bg.tuvarna.universitytimetable.service.TeacherService;
+import bg.tuvarna.universitytimetable.util.DayOfWeekUtil;
 import bg.tuvarna.universitytimetable.util.ResourceBundleUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,11 +103,14 @@ public class SubjectServiceImpl implements SubjectService {
             if (courseData.getGroups() != null) {
                 course.setGroups(
                     courseData.getGroups()
-                        .stream().map(g -> groupRepository
-                            .findAllByNameIgnoreCase(g)
-                            .orElseGet(() -> Group.builder().name(g).build()))
+                        .stream().map(g -> groupRepository.findAllByNameIgnoreCase(g)
+                            .orElseGet(() -> groupRepository.save(Group.builder().name(g).build())))
                         .collect(Collectors.toList())
                 );
+            }
+
+            if (course.getCourseTimes() != null) {
+                course.getCourseTimes().forEach(ct -> ct.setCourse(course));
             }
         }
 
@@ -124,7 +128,8 @@ public class SubjectServiceImpl implements SubjectService {
                 "subjectTypes", SubjectType.values(),
                 "courseYears", CourseYear.values(),
                 "rooms", roomService.getList(),
-                "teachers", teacherService.getList());
+                "teachers", teacherService.getList(),
+                "dayOfWeek", DayOfWeekUtil.getLocaleDays());
         return new ValidationException(message, "subject/create", models);
     }
 }

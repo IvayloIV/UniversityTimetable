@@ -1,15 +1,14 @@
 package bg.tuvarna.universitytimetable.mapper;
 
 import bg.tuvarna.universitytimetable.dto.data.CreateCourseData;
-import bg.tuvarna.universitytimetable.dto.data.CreateSubjectData;
 import bg.tuvarna.universitytimetable.entity.Course;
-import bg.tuvarna.universitytimetable.entity.Subject;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring",
+        uses = {CourseTimeMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CourseMapper {
 

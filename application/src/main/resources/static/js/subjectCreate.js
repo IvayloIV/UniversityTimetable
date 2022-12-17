@@ -13,6 +13,7 @@ $(window).on('load', () => {
         removeSelectDisabled($('.year-select'), 1);
         removeSelectDisabled($('.room-select'), 1);
         removeSelectDisabled($('.teacher-select'), 1);
+        removeSelectDisabled($('.course-time-day'), 1);
         $('#subject-create-form').submit();
     });
 

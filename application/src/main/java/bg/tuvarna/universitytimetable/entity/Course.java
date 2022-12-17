@@ -70,9 +70,12 @@ public class Course {
     @JoinColumn(name = "subject_id", referencedColumnName = "id", nullable = false)
     private Subject subject;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "course_group",
         joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "id"))
     private List<Group> groups;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<CourseTime> courseTimes;
 }
