@@ -27,6 +27,9 @@ public class Schedule {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
+    @Column(name = "hex_color", nullable = false, length = 15)
+    private String hexColor;
+
     @Column(name = "active", nullable = false)
     private Boolean active;
 

@@ -87,7 +87,7 @@ public class SubjectController extends BaseController {
     @GetMapping("/create")
     public ModelAndView createSubject(ModelAndView modelAndView) {
         CreateSubjectData createSubjectData = new CreateSubjectData();
-        createSubjectData.setCourses(List.of(/*createCourseData*/));
+        createSubjectData.setCourses(List.of());
         modelAndView.addObject("createSubjectData", createSubjectData);
         return view("subject/create", modelAndView);
     }
