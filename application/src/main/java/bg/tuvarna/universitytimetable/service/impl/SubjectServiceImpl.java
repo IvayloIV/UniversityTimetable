@@ -2,28 +2,37 @@ package bg.tuvarna.universitytimetable.service.impl;
 
 import bg.tuvarna.universitytimetable.dto.data.CreateCourseData;
 import bg.tuvarna.universitytimetable.dto.data.CreateSubjectData;
+import bg.tuvarna.universitytimetable.dto.data.SubjectSearchData;
+import bg.tuvarna.universitytimetable.dto.model.SubjectPaginatedModel;
 import bg.tuvarna.universitytimetable.entity.*;
 import bg.tuvarna.universitytimetable.entity.enums.*;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.SubjectMapper;
 import bg.tuvarna.universitytimetable.repository.*;
-import bg.tuvarna.universitytimetable.service.FacultyService;
-import bg.tuvarna.universitytimetable.service.RoomService;
-import bg.tuvarna.universitytimetable.service.SubjectService;
-import bg.tuvarna.universitytimetable.service.TeacherService;
+import bg.tuvarna.universitytimetable.service.*;
 import bg.tuvarna.universitytimetable.util.DayOfWeekUtil;
 import bg.tuvarna.universitytimetable.util.ResourceBundleUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static bg.tuvarna.universitytimetable.repository.specification.SubjectSpecification.*;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
+
+    private final static Integer SUBJECTS_PER_PAGE = 16;
 
     private final SpecialtyRepository specialtyRepository;
     private final SubjectRepository subjectRepository;
@@ -35,6 +44,7 @@ public class SubjectServiceImpl implements SubjectService {
     private final RoomService roomService;
     private final TeacherService teacherService;
     private final FacultyService facultyService;
+    private final CourseService courseService;
 
     @Autowired
     public SubjectServiceImpl(SpecialtyRepository specialtyRepository,
@@ -46,7 +56,8 @@ public class SubjectServiceImpl implements SubjectService {
                               SubjectMapper subjectMapper,
                               RoomService roomService,
                               TeacherService teacherService,
-                              FacultyService facultyService) {
+                              FacultyService facultyService,
+                              CourseService courseService) {
         this.specialtyRepository = specialtyRepository;
         this.subjectRepository = subjectRepository;
         this.teacherRepository = teacherRepository;
@@ -57,6 +68,7 @@ public class SubjectServiceImpl implements SubjectService {
         this.roomService = roomService;
         this.teacherService = teacherService;
         this.facultyService = facultyService;
+        this.courseService = courseService;
     }
 
     @Override
@@ -116,6 +128,72 @@ public class SubjectServiceImpl implements SubjectService {
 
         subjectRepository.save(subject);
         return true;
+    }
+
+    @Override
+    @Transactional
+    public SubjectPaginatedModel getList(SubjectSearchData searchData) {
+        Pageable pageable = PageRequest.of(searchData.getPage() - 1, SUBJECTS_PER_PAGE,
+                Sort.by(Sort.Direction.DESC, "createdDate"));
+
+        Page<Subject> subjectsPage = subjectRepository.findAll(
+                where(withName(searchData.getName()))
+                        .and(withType(searchData.getSubjectType()))
+                        .and(withFacultyId(searchData.getFacultyId()))
+                        .and(withDepartmentId(searchData.getDepartmentId()))
+                        .and(withSpecialtyId(searchData.getSpecialtyId()))
+                        .and(withTeacherId(searchData.getTeacherId()))
+                        .and(isArchived(false)),
+                pageable
+        );
+
+        List<Subject> subjects = subjectsPage.getContent();
+        subjects.forEach(s -> s.setCourses(courseService.getCoursesBySubjectId(s.getId())));
+
+        return SubjectPaginatedModel.builder()
+                .currentPage(subjectsPage.getNumber() + 1)
+                .totalPages(subjectsPage.getTotalPages())
+                .subjects(subjectMapper.entityToModel(subjects))
+                .build();
+    }
+
+    @Override
+    public String updateActiveStatus(Long id) {
+        Subject subject = findById(id);
+        subject.setActive(!subject.getActive());
+        subjectRepository.save(subject);
+        return resourceBundleUtil.getMessage("courseList.statusUpdate");
+    }
+
+    @Override
+    public void archiveSubject(Long id) {
+        Subject subject = findById(id);
+        subject.setArchived(true);
+        subjectRepository.save(subject);
+    }
+
+    @Override
+    public String modelToQueryParams(SubjectSearchData searchData) {
+        StringBuilder sb = new StringBuilder();
+        Field[] declaredFields = searchData.getClass().getDeclaredFields();
+        Arrays.stream(declaredFields).forEach(f -> {
+            try {
+                f.setAccessible(true);
+                Object value = f.get(searchData);
+                if (!ObjectUtils.isEmpty(value)) {
+                    sb.append(String.format("&%s=%s", f.getName(), value));
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return "?" + sb.substring(1);
+    }
+
+    private Subject findById(Long id) {
+        return subjectRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException(resourceBundleUtil.getMessage("courseList.subjectNotFound")));
     }
 
     private ValidationException createSubjectException(String messageKey, CreateSubjectData subjectData) {

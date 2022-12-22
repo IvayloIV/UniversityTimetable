@@ -18,4 +18,10 @@ public class DayOfWeekUtil {
             })
             .toArray(String[]::new);
     }
+
+    public static String getLocaleDay(DayOfWeek day) {
+        Locale locale = LocaleContextHolder.getLocale();
+        String displayName = day.getDisplayName(TextStyle.FULL, locale);
+        return displayName.substring(0, 1).toUpperCase() + displayName.substring(1).toLowerCase();
+    }
 }

@@ -1,6 +1,7 @@
 package bg.tuvarna.universitytimetable.web.controller;
 
 import bg.tuvarna.universitytimetable.dto.data.CreateSubjectData;
+import bg.tuvarna.universitytimetable.dto.data.SubjectSearchData;
 import bg.tuvarna.universitytimetable.dto.model.FacultyListModel;
 import bg.tuvarna.universitytimetable.dto.model.RoomListModel;
 import bg.tuvarna.universitytimetable.dto.model.TeacherListModel;
@@ -96,8 +97,21 @@ public class SubjectController extends BaseController {
     public ModelAndView createSubject(@Valid @ModelAttribute("createSubjectData") CreateSubjectData createSubjectData,
                                        BindingResult bindingResult) {
         if (subjectService.createSubject(createSubjectData, bindingResult)) {
-            return redirect("/subject/create");
+            return redirect("/subject/list");
         }
         return view("subject/create");
+    }
+
+    @GetMapping("/list")
+    public ModelAndView getList(SubjectSearchData searchData, ModelAndView modelAndView) {
+        modelAndView.addObject("subjectPaginatedModel", subjectService.getList(searchData));
+        return view("subject/list", modelAndView);
+    }
+
+    @PostMapping("/delete/{id}")
+    public ModelAndView delete(@PathVariable Long id, SubjectSearchData searchData) {
+        subjectService.archiveSubject(id);
+        String queryParams = subjectService.modelToQueryParams(searchData);
+        return redirect("/subject/list" + queryParams);
     }
 }

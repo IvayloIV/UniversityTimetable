@@ -97,7 +97,8 @@ CREATE TABLE subject (
     name_en VARCHAR(63) NOT NULL,
     type VARCHAR(31) NOT NULL,
     active BOOLEAN NOT NULL DEFAULT TRUE,
-    archived BOOLEAN NOT NULL DEFAULT FALSE
+    archived BOOLEAN NOT NULL DEFAULT FALSE,
+    created_date TIMESTAMP NOT NULL
 );
 
 ALTER TABLE subject ADD CONSTRAINT name_bg_length_check CHECK (length(name_bg) >= 1);

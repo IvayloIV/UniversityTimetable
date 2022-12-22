@@ -29,8 +29,6 @@ $(window).on('load', () => {
             .filter(g => {
                 return $(g).val().toLowerCase() === value.toLowerCase();
             })
-        console.log(groupsWithTheSameName);
-        console.log(value.toLowerCase());
 
         if (isValid && groupsWithTheSameName.length !== 0) {
             groupExistsValidation.removeClass('d-none');

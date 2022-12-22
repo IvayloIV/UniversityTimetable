@@ -31,7 +31,9 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/webjars/**", "/js/**", "/department/faculty/{id}", "/specialty/department/{departmentId}").permitAll()
                 .antMatchers("/user/login").anonymous()
-                .antMatchers("/teacher/create", "/teacher/delete/{id}", "/specialty/create", "/specialty/delete/{id}", "/subject/create", "/department/{id}", "/specialty/{id}").hasAuthority("ADMIN")
+                .antMatchers("/teacher/create", "/teacher/delete/{id}", "/specialty/create", "/specialty/delete/{id}", "/subject/create",
+                        "/department/{id}", "/specialty/{id}", "/subject/update/status/{id}", "/subject/delete/{id}", "/course/update/status/{id}",
+                        "/course/delete/{id}").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
             .and()
                 .formLogin()

@@ -3,14 +3,18 @@ package bg.tuvarna.universitytimetable.entity;
 import bg.tuvarna.universitytimetable.entity.enums.SubjectType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "subject")
+@EntityListeners(AuditingEntityListener.class)
 public class Subject {
 
     @Id
@@ -32,6 +36,10 @@ public class Subject {
 
     @Column(name = "archived", nullable = false)
     private Boolean archived;
+
+    @CreatedDate
+    @Column(name = "created_date", nullable = false)
+    private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
     private List<Course> courses;
