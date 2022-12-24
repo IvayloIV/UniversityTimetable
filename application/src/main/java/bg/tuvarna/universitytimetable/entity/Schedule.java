@@ -1,5 +1,6 @@
 package bg.tuvarna.universitytimetable.entity;
 
+import bg.tuvarna.universitytimetable.entity.enums.ScheduleStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -30,8 +31,9 @@ public class Schedule {
     @Column(name = "hex_color", nullable = false, length = 15)
     private String hexColor;
 
-    @Column(name = "active", nullable = false)
-    private Boolean active;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ScheduleStatus status;
 
     @ManyToOne
     @JoinColumn(name = "course_id", referencedColumnName = "id", nullable = false)

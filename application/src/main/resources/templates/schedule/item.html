@@ -1,0 +1,70 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="schedule">
+    <div>
+        <table class="table table-bordered border-dark w-75 mx-auto" style="border-collapse:collapse;" th:object="${scheduleCourse}">
+            <tbody>
+                <tr class="fw-bold text-center">
+                    <td rowspan="3"></td>
+                    <td colspan="8" th:text="*{year}"></td>
+                    <th:block th:with="semester=*{@resourceBundleUtil.getMessage(semester.key)}">
+                        <td colspan="8" th:text="${#strings.toUpperCase(semester)}"></td>
+                    </th:block>
+                    <td rowspan="2" colspan="20" class="align-middle" th:text="#{scheduleList.itemTitle}"></td>
+                    <td colspan="8" th:text="*{departmentNameBg}"></td>
+                    <td colspan="4" th:text="*{specialtyNameBg}"></td>
+                    <td colspan="8" th:text="*{@resourceBundleUtil.getMessage(degree.key)}"></td>
+                </tr>
+                <tr class="text-center">
+                    <td colspan="8" th:text="#{scheduleList.schoolYear}"></td>
+                    <td colspan="8" th:text="#{scheduleList.semester}"></td>
+                    <td colspan="8" th:text="#{scheduleList.department}"></td>
+                    <td colspan="4" th:text="#{scheduleList.specialty}"></td>
+                    <td colspan="4" class="fw-bold" th:text="*{courseYear} + ' ' + #{scheduleList.course}"></td>
+                    <td colspan="4" class="fw-bold" th:text="*{@resourceBundleUtil.getMessage(mode.key)}"></td>
+                </tr>
+                <tr class="text-center align-middle">
+                    <td colspan="4" th:text="#{scheduleList.dayTime}"></td>
+                    <td colspan="4" class="px-0"
+                        th:each="h : ${#numbers.sequence(7,19)}">
+                            <th:block th:text="${h}"></th:block><sup>15</sup>
+                            -
+                            <th:block th:text="${h + 1}"></th:block><sup>00</sup>
+                    </td>
+                </tr>
+                <th:block th:each="dayOfWeek: ${daysOfWeek}">
+                    <tr class="text-center" th:each="group,groupRowStat: *{groups}" th:with="counter=0">
+                        <td class="align-bottom" th:text="${group.name}"></td>
+                        <td colspan="4"
+                            rowspan="2"
+                            class="align-middle px-0"
+                            style="writing-mode:vertical-rl;transform:rotate(180deg);"
+                            th:if="${groupRowStat.index == 0}"
+                            th:text="${@dayOfWeekUtil.getDay(dayOfWeek, 'bg')}"></td>
+                        <th:block th:each="h,hourRowStat : ${#numbers.sequence(7,19)}">
+                            <th:block th:each="m,minuteRowStat : ${#numbers.sequence(15,60,15)}"
+                                      th:with="time=${h + m / 60} + ':' + ${m % 60}">
+                                <th:block th:each="course: ${scheduleCourse.schedules.get(time)}"
+                                          th:with="colSpan=${((course.getEndTime().getHour() * 60 + course.getEndTime().getMinute()) - ((h + m / 60) * 60 + (m % 60))) / 15}">
+                                    <td th:if="${course.day == dayOfWeek and ((course.group == null and groupRowStat.index == 0) or group.id == course.group?.id)}"
+                                        class="p-1"
+                                        th:colspan="${colSpan}"
+                                        th:rowspan="${course.group == null and groupRowStat.index == 0} ? *{groups.size} : 1"
+                                        th:style="'border-left:0px;' + ${m % 60 == 0 ? '' : 'border-right:1px dotted black;'}"
+                                        th:with="counter=${@counterUtil.setNum(colSpan)}">
+                                            <th:block th:text="${course.hexColor}"></th:block>
+                                    </td>
+                                    <th:block th:if="${course.day == dayOfWeek and course.group == null and groupRowStat.index > 0}"
+                                              th:with="counter=${@counterUtil.setNum(colSpan)}">
+                                    </th:block>
+                                </th:block>
+                                <td th:unless="${@counterUtil.getAndDecrement() > 0}"
+                                    class="p-1"
+                                    th:style="'border-left:0px;' + ${m % 60 == 0 ? '' : 'border-right:1px dotted black;'}">
+                                </td>
+                            </th:block>
+                        </th:block>
+                    </tr>
+                </th:block>
+            </tbody>
+        </table>
+    </div>
+</th:block>

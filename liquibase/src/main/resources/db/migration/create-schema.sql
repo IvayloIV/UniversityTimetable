@@ -179,7 +179,7 @@ CREATE TABLE schedule (
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     hex_color VARCHAR(15) NOT NULL,
-    active BOOLEAN NOT NULL DEFAULT TRUE,
+    status VARCHAR(15) NOT NULL,
     course_id BIGINT NOT NULL,
     academic_year_id BIGINT NOT NULL,
     FOREIGN KEY (course_id) REFERENCES course (id),
@@ -189,3 +189,4 @@ CREATE TABLE schedule (
 ALTER TABLE schedule ADD CONSTRAINT end_time_check CHECK (end_time > start_time);
 ALTER TABLE schedule ADD CONSTRAINT hex_color_length_check CHECK (length(hex_color) > 3);
 ALTER TABLE schedule ADD CONSTRAINT day_check CHECK (day in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'));
+ALTER TABLE schedule ADD CONSTRAINT status_check CHECK (status in ('PENDING', 'ACTIVE', 'INACTIVE'));

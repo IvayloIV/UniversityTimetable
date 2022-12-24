@@ -18,7 +18,7 @@
                             </span>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-item" sec:authorize="hasAuthority('ADMIN')">
-                                    <a class="nav-link text-dark p-0" th:href="@{/timetable/generate}">
+                                    <a class="nav-link text-dark p-0" th:href="@{/schedule/generate}">
                                         <th:block th:text="#{nav.generateTimetables}"/>
                                     </a>
                                 </li>

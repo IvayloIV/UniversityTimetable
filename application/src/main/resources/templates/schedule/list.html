@@ -1,0 +1,11 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="scheduleList">
+    <div>
+        <th:block th:each="faculty: ${faculties}">
+            <h2 class="text-center mt-3" th:text="${faculty.nameBg}"></h2>
+            <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50">
+            <div th:each="scheduleCourse: ${faculty.courses}">
+                <div th:include="~{schedule/item}"></div>
+            </div>
+        </th:block>
+    </div>
+</th:block>
