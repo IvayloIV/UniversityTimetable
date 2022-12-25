@@ -5,11 +5,14 @@ import bg.tuvarna.universitytimetable.entity.enums.CourseYear;
 import bg.tuvarna.universitytimetable.entity.enums.Degree;
 import bg.tuvarna.universitytimetable.entity.enums.Semester;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 @Data
+@EqualsAndHashCode(exclude={"groups", "schedules"})
 public class CourseScheduleModel {
 
     private String year;
@@ -30,7 +33,7 @@ public class CourseScheduleModel {
 
     private CourseMode mode;
 
-    private List<GroupScheduleModel> groups;
+    private SortedSet<GroupScheduleModel> groups;
 
     private Map<String, List<ScheduleDetailsModel>> schedules;
 }

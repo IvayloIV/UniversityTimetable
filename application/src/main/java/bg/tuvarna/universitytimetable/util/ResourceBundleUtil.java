@@ -21,4 +21,8 @@ public class ResourceBundleUtil {
         Locale locale = LocaleContextHolder.getLocale();
         return this.messageSource.getMessage(key, args, locale);
     }
+
+    public String getMessage(String key, String language, Object... args) {
+        return this.messageSource.getMessage(key, args, new Locale(language));
+    }
 }

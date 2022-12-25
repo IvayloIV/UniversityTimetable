@@ -1,56 +1,76 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="schedule">
     <div>
-        <table class="table table-bordered border-dark w-75 mx-auto" style="border-collapse:collapse;" th:object="${scheduleCourse}">
-            <tbody>
+        <table class="table table-bordered border-dark mx-auto" style="border-collapse:collapse;width:90%;" th:object="${scheduleCourse}">
+            <tbody th:with="language=*{degree.language}">
                 <tr class="fw-bold text-center">
-                    <td rowspan="3"></td>
-                    <td colspan="8" th:text="*{year}"></td>
-                    <th:block th:with="semester=*{@resourceBundleUtil.getMessage(semester.key)}">
-                        <td colspan="8" th:text="${#strings.toUpperCase(semester)}"></td>
+                    <td rowspan="3" th:unless="*{groups.first().id == -1}" class="border border-dark border-2"></td>
+                    <td colspan="8" th:text="*{year}" class="border border-dark border-2"></td>
+                    <th:block th:with="semester=*{@resourceBundleUtil.getMessage(semester.key,degree.language)}">
+                        <td colspan="8" th:text="${#strings.toUpperCase(semester)}" class="border border-dark border-2"></td>
                     </th:block>
-                    <td rowspan="2" colspan="20" class="align-middle" th:text="#{scheduleList.itemTitle}"></td>
-                    <td colspan="8" th:text="*{departmentNameBg}"></td>
-                    <td colspan="4" th:text="*{specialtyNameBg}"></td>
-                    <td colspan="8" th:text="*{@resourceBundleUtil.getMessage(degree.key)}"></td>
+                    <td rowspan="2" colspan="20" class="align-middle border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.itemTitle',language)}"></td>
+                    <td colspan="8" class="border border-dark border-2" th:text="${language == 'bg'} ? *{departmentNameBg} : *{departmentNameEn}"></td>
+                    <td colspan="4" class="border border-dark border-2" th:text="${language == 'bg'} ? *{specialtyNameBg} : *{specialtyNameEn}"></td>
+                    <td colspan="8" class="border border-dark border-2" th:text="*{@resourceBundleUtil.getMessage(degree.key,degree.language)}"></td>
                 </tr>
                 <tr class="text-center">
-                    <td colspan="8" th:text="#{scheduleList.schoolYear}"></td>
-                    <td colspan="8" th:text="#{scheduleList.semester}"></td>
-                    <td colspan="8" th:text="#{scheduleList.department}"></td>
-                    <td colspan="4" th:text="#{scheduleList.specialty}"></td>
-                    <td colspan="4" class="fw-bold" th:text="*{courseYear} + ' ' + #{scheduleList.course}"></td>
-                    <td colspan="4" class="fw-bold" th:text="*{@resourceBundleUtil.getMessage(mode.key)}"></td>
+                    <td colspan="8" class="border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.schoolYear',language)}"></td>
+                    <td colspan="8" class="border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.semester',language)}"></td>
+                    <td colspan="8" class="border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.department',language)}"></td>
+                    <td colspan="4" class="border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.specialty',language)}"></td>
+                    <td colspan="4" class="fw-bold border border-dark border-2" th:text="*{courseYear} + ' ' + ${@resourceBundleUtil.getMessage('scheduleList.course',language)}"></td>
+                    <td colspan="4" class="fw-bold border border-dark border-2" th:text="*{@resourceBundleUtil.getMessage(mode.key,degree.language)}"></td>
                 </tr>
                 <tr class="text-center align-middle">
-                    <td colspan="4" th:text="#{scheduleList.dayTime}"></td>
-                    <td colspan="4" class="px-0"
+                    <td colspan="4" class="border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.dayTime',language)}"></td>
+                    <td colspan="4" class="px-0 border border-dark border-2"
                         th:each="h : ${#numbers.sequence(7,19)}">
                             <th:block th:text="${h}"></th:block><sup>15</sup>
                             -
                             <th:block th:text="${h + 1}"></th:block><sup>00</sup>
                     </td>
                 </tr>
-                <th:block th:each="dayOfWeek: ${daysOfWeek}">
+                <th:block th:each="dayOfWeek,dayOfWeekRowStat: ${daysOfWeek}">
                     <tr class="text-center" th:each="group,groupRowStat: *{groups}" th:with="counter=0">
-                        <td class="align-bottom" th:text="${group.name}"></td>
+                        <td class="align-bottom"
+                            th:text="${group.name}"
+                            th:unless="${group.id == -1}"
+                            th:style="'border-left:2px solid black;border-right:2px solid black;border-top:0px;' + ${groupRowStat.last ? 'border-bottom: 2px solid black;' : ''}">
+                        </td>
                         <td colspan="4"
-                            rowspan="2"
-                            class="align-middle px-0"
+                            th:rowspan="*{groups.size}"
+                            class="align-middle px-0 border border-dark border-2"
                             style="writing-mode:vertical-rl;transform:rotate(180deg);"
                             th:if="${groupRowStat.index == 0}"
-                            th:text="${@dayOfWeekUtil.getDay(dayOfWeek, 'bg')}"></td>
+                            th:text="${@dayOfWeekUtil.getDay(dayOfWeek,language)}"></td>
                         <th:block th:each="h,hourRowStat : ${#numbers.sequence(7,19)}">
                             <th:block th:each="m,minuteRowStat : ${#numbers.sequence(15,60,15)}"
                                       th:with="time=${h + m / 60} + ':' + ${m % 60}">
                                 <th:block th:each="course: ${scheduleCourse.schedules.get(time)}"
                                           th:with="colSpan=${((course.getEndTime().getHour() * 60 + course.getEndTime().getMinute()) - ((h + m / 60) * 60 + (m % 60))) / 15}">
                                     <td th:if="${course.day == dayOfWeek and ((course.group == null and groupRowStat.index == 0) or group.id == course.group?.id)}"
-                                        class="p-1"
+                                        class="p-1 align-middle border border-dark border-2"
                                         th:colspan="${colSpan}"
                                         th:rowspan="${course.group == null and groupRowStat.index == 0} ? *{groups.size} : 1"
-                                        th:style="'border-left:0px;' + ${m % 60 == 0 ? '' : 'border-right:1px dotted black;'}"
+                                        th:style="'background-color:' + ${course.hexColor}"
                                         th:with="counter=${@counterUtil.setNum(colSpan)}">
-                                            <th:block th:text="${course.hexColor}"></th:block>
+                                            <div class="fw-bold"
+                                                 th:text="${@resourceBundleUtil.getMessage(course.subjectType.abbreviation,language)} + ' ' + ${language == 'bg' ? course.subjectNameBg : course.subjectNameEn}">
+                                            </div>
+                                            <div class="fw-bold d-flex justify-content-center" th:if="${course.week.name != 'ALL' or (course.startWeek != null and course.endWeek != null)}">
+                                                <span th:if="${course.week.name != 'ALL'}"
+                                                          th:with="courseWeek=${@resourceBundleUtil.getMessage(course.week.key,language)}"
+                                                          th:text="${#strings.toLowerCase(courseWeek)}">
+                                                </span>
+                                                <span th:if="${course.week.name != 'ALL' and course.startWeek != null and course.endWeek != null}">(</span>
+                                                <span th:if="${course.startWeek != null and course.endWeek != null}"
+                                                          th:text="${course.startWeek} + '-' + ${course.endWeek}">
+                                                </span>
+                                                <span th:if="${course.week.name != 'ALL' and course.endWeek != null and course.endWeek != null}">)</span>&nbsp;
+                                                <span th:text="${@resourceBundleUtil.getMessage('scheduleList.week',language)}"></span>
+                                            </div>
+                                            <div th:text="${language == 'bg' ? course.teacherNameBg : course.teacherNameEn}"></div>
+                                            <div th:text="${language == 'bg' ? course.roomNumberBg : course.roomNumberEn}"></div>
                                     </td>
                                     <th:block th:if="${course.day == dayOfWeek and course.group == null and groupRowStat.index > 0}"
                                               th:with="counter=${@counterUtil.setNum(colSpan)}">
@@ -58,7 +78,8 @@
                                 </th:block>
                                 <td th:unless="${@counterUtil.getAndDecrement() > 0}"
                                     class="p-1"
-                                    th:style="'border-left:0px;' + ${m % 60 == 0 ? '' : 'border-right:1px dotted black;'}">
+                                    th:style="'border-left:0px;' + ${m % 60 == 0 ? 'border-right:2px solid black;' : 'border-right:1px dotted black;'}
+                                        + ${groupRowStat.last ? 'border-bottom: 2px solid black;' : ''}">
                                 </td>
                             </th:block>
                         </th:block>

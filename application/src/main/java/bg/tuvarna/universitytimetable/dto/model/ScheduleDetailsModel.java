@@ -36,5 +36,9 @@ public class ScheduleDetailsModel {
 
     private CourseWeek week;
 
+    private Short startWeek;
+
+    private Short endWeek;
+
     private GroupScheduleModel group;
 }

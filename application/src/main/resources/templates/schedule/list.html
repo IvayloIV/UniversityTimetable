@@ -1,11 +1,30 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="scheduleList">
     <div>
-        <th:block th:each="faculty: ${faculties}">
+        <h2 class="text-center mt-5 mb-3" th:text="#{scheduleList.title}"></h2>
+        <div class="d-flex flex-column align-items-center mb-4">
+            <div class="button-holder" style="width:40%;">
+                <form class="form" th:action="@{/schedule/generate}" th:method="POST">
+                    <button type="submit" class="btn btn-primary w-100 fw-bold" th:text="#{scheduleList.generate}"></button>
+                </form>
+            </div>
+            <div th:if="${faculties.size > 0}" class="button-holder mt-2" style="width:32%;">
+                <form class="form" th:action="@{/schedule/save}" th:method="POST">
+                    <button type="submit" class="btn btn-success w-100 fw-bold" th:text="#{scheduleList.save}"></button>
+                </form>
+            </div>
+        </div>
+        <hr class="hr-2 w-100 border-top border-primary border-2 mx-auto opacity-50 mt-0">
+        <th:block th:each="faculty,facultyRowStat: ${faculties}">
             <h2 class="text-center mt-3" th:text="${faculty.nameBg}"></h2>
-            <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50">
-            <div th:each="scheduleCourse: ${faculty.courses}">
-                <div th:include="~{schedule/item}"></div>
+            <hr class="hr-2 w-25 border-top border-primary border-2 mx-auto opacity-50 mt-0">
+            <div th:each="scheduleCourse,scheduleCourseRowStat: ${faculty.courses}">
+                <div th:class="${scheduleCourseRowStat.last and !facultyRowStat.last ? 'mb-4' : 'mb-5'}" th:include="~{schedule/item}"></div>
             </div>
         </th:block>
+        <div th:if="${faculties.size == 0}"
+             class="text-center h6 fst-italic text-danger mt-4"
+             style="margin-bottom:26.5rem;"
+             th:text="#{scheduleList.timetablesNotFound}">
+        </div>
     </div>
 </th:block>
