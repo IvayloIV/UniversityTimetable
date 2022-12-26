@@ -33,7 +33,7 @@
                 <th:block th:each="dayOfWeek,dayOfWeekRowStat: ${daysOfWeek}">
                     <tr class="text-center" th:each="group,groupRowStat: *{groups}" th:with="counter=0">
                         <td class="align-bottom"
-                            th:text="${group.name}"
+                            th:text="${group.name} + ' ' + ${@resourceBundleUtil.getMessage('scheduleList.group',language)}"
                             th:unless="${group.id == -1}"
                             th:style="'border-left:2px solid black;border-right:2px solid black;border-top:0px;' + ${groupRowStat.last ? 'border-bottom: 2px solid black;' : ''}">
                         </td>
@@ -54,23 +54,25 @@
                                         th:rowspan="${course.group == null and groupRowStat.index == 0} ? *{groups.size} : 1"
                                         th:style="'background-color:' + ${course.hexColor}"
                                         th:with="counter=${@counterUtil.setNum(colSpan)}">
-                                            <div class="fw-bold"
-                                                 th:text="${@resourceBundleUtil.getMessage(course.subjectType.abbreviation,language)} + ' ' + ${language == 'bg' ? course.subjectNameBg : course.subjectNameEn}">
-                                            </div>
-                                            <div class="fw-bold d-flex justify-content-center" th:if="${course.week.name != 'ALL' or (course.startWeek != null and course.endWeek != null)}">
-                                                <span th:if="${course.week.name != 'ALL'}"
-                                                          th:with="courseWeek=${@resourceBundleUtil.getMessage(course.week.key,language)}"
-                                                          th:text="${#strings.toLowerCase(courseWeek)}">
-                                                </span>
-                                                <span th:if="${course.week.name != 'ALL' and course.startWeek != null and course.endWeek != null}">(</span>
-                                                <span th:if="${course.startWeek != null and course.endWeek != null}"
-                                                          th:text="${course.startWeek} + '-' + ${course.endWeek}">
-                                                </span>
-                                                <span th:if="${course.week.name != 'ALL' and course.endWeek != null and course.endWeek != null}">)</span>&nbsp;
-                                                <span th:text="${@resourceBundleUtil.getMessage('scheduleList.week',language)}"></span>
-                                            </div>
-                                            <div th:text="${language == 'bg' ? course.teacherNameBg : course.teacherNameEn}"></div>
-                                            <div th:text="${language == 'bg' ? course.roomNumberBg : course.roomNumberEn}"></div>
+                                            <a th:href="@{/schedule/edit/{scheduleId}(scheduleId=${course.id})}" class="text-dark text-decoration-none">
+                                                <div class="fw-bold"
+                                                     th:text="${@resourceBundleUtil.getMessage(course.subjectType.abbreviation,language)} + ' ' + ${language == 'bg' ? course.subjectNameBg : course.subjectNameEn}">
+                                                </div>
+                                                <div class="fw-bold d-flex justify-content-center" th:if="${course.week.name != 'ALL' or (course.startWeek != null and course.endWeek != null)}">
+                                                    <span th:if="${course.week.name != 'ALL'}"
+                                                              th:with="courseWeek=${@resourceBundleUtil.getMessage(course.week.key,language)}"
+                                                              th:text="${#strings.toLowerCase(courseWeek)}">
+                                                    </span>
+                                                    <span th:if="${course.week.name != 'ALL' and course.startWeek != null and course.endWeek != null}">(</span>
+                                                    <span th:if="${course.startWeek != null and course.endWeek != null}"
+                                                              th:text="${course.startWeek} + '-' + ${course.endWeek}">
+                                                    </span>
+                                                    <span th:if="${course.week.name != 'ALL' and course.endWeek != null and course.endWeek != null}">)</span>&nbsp;
+                                                    <span th:text="${@resourceBundleUtil.getMessage('scheduleList.week',language)}"></span>
+                                                </div>
+                                                <div th:text="${language == 'bg' ? course.teacherNameBg : course.teacherNameEn}"></div>
+                                                <div th:text="${language == 'bg' ? course.roomNumberBg : course.roomNumberEn}"></div>
+                                            </a>
                                     </td>
                                     <th:block th:if="${course.day == dayOfWeek and course.group == null and groupRowStat.index > 0}"
                                               th:with="counter=${@counterUtil.setNum(colSpan)}">

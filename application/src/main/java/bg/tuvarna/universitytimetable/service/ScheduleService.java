@@ -7,4 +7,6 @@ import java.util.List;
 public interface ScheduleService {
 
     List<FacultyScheduleModel> findAll();
+
+    void save();
 }

@@ -7,6 +7,7 @@ import bg.tuvarna.universitytimetable.dto.model.ScheduleDetailsModel;
 import bg.tuvarna.universitytimetable.entity.Faculty;
 import bg.tuvarna.universitytimetable.entity.Schedule;
 import bg.tuvarna.universitytimetable.entity.enums.ScheduleStatus;
+import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.GroupMapper;
 import bg.tuvarna.universitytimetable.mapper.ScheduleMapper;
 import bg.tuvarna.universitytimetable.repository.ScheduleRepository;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -72,7 +74,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             }
 
             List<CourseScheduleModel> courses = facultyModel.getCourses();
-            CourseScheduleModel courseModel = scheduleMapper.entityToModel(schedule);
+            CourseScheduleModel courseModel = scheduleMapper.entityToCourseModel(schedule);
             if (courses.size() == 0 || !courses.get(courses.size() - 1).equals(courseModel)) {
                 courseModel.setGroups(new TreeSet<>());
                 addDefaultGroup(courseModel);
@@ -82,28 +84,37 @@ public class ScheduleServiceImpl implements ScheduleService {
                 courseModel = courses.get(courses.size() - 1);
             }
 
-            List<GroupScheduleModel> groupModels = groupMapper.entityToModel(schedule.getCourse().getGroups());
+            ScheduleDetailsModel scheduleModel = scheduleMapper.entityToScheduleModel(schedule);
 
-            if (groupModels.size() == 0) {
-                addNewSchedule(schedule, courseModel, null);
-            } else {
+            if (scheduleModel.getGroup() != null) {
                 SortedSet<GroupScheduleModel> groupModelsSet = courseModel.getGroups();
                 if (groupModelsSet.size() == 1 && groupModelsSet.first().getId().equals(-1L)) {
                     groupModelsSet.removeIf(g -> g.getId().equals(-1L));
                 }
-                groupModelsSet.addAll(groupModels);
-
-                for (GroupScheduleModel groupModel : groupModels) {
-                    addNewSchedule(schedule, courseModel, groupModel);
-                }
+                groupModelsSet.add(scheduleModel.getGroup());
             }
+
+            addNewSchedule(scheduleModel, courseModel);
         }
 
         return facultyModels;
     }
 
-    private void addNewSchedule(Schedule schedule, CourseScheduleModel courseModel, GroupScheduleModel groupModel) {
-        ScheduleDetailsModel scheduleModel = scheduleMapper.entityToModel(schedule, groupModel);
+    @Override
+    @Transactional
+    public void save() {
+        if (scheduleRepository.countByStatus(ScheduleStatus.PENDING) == 0) {
+            String message = resourceBundleUtil.getMessage("scheduleList.timetablesNotFound");
+            List<DayOfWeek> daysOfWeek = List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
+            throw new ValidationException(message, "schedule/generate", Map.of("daysOfWeek", daysOfWeek));
+        }
+
+        scheduleRepository.updateStatus(ScheduleStatus.ACTIVE, ScheduleStatus.INACTIVE);
+        scheduleRepository.updateStatus(ScheduleStatus.PENDING, ScheduleStatus.ACTIVE);
+    }
+
+    private void addNewSchedule(ScheduleDetailsModel scheduleModel, CourseScheduleModel courseModel) {
         String time = scheduleModel.getStartTime().format(DateTimeFormatter.ofPattern("H:m"));
 
         Map<String, List<ScheduleDetailsModel>> schedulesMap = courseModel.getSchedules();

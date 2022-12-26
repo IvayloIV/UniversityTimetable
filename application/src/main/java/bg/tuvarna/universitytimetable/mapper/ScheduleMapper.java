@@ -22,7 +22,7 @@ public interface ScheduleMapper {
         @Mapping(target = "courseYear", source = "schedule.course.year"),
         @Mapping(target = "mode", source = "schedule.course.mode")
     })
-    CourseScheduleModel entityToModel(Schedule schedule);
+    CourseScheduleModel entityToCourseModel(Schedule schedule);
 
     @Mappings({
         @Mapping(target = "id", source = "schedule.id"),
@@ -38,7 +38,7 @@ public interface ScheduleMapper {
         @Mapping(target = "week", source = "schedule.course.week"),
         @Mapping(target = "startWeek", source = "schedule.course.startWeek"),
         @Mapping(target = "endWeek", source = "schedule.course.endWeek"),
-        @Mapping(target = "group", source = "groupModel"),
+        @Mapping(target = "group", source = "schedule.group"),
         @Mapping(target = "teacherNameBg", expression = "java(schedule.getCourse().getTeacher().getAcademicRankBg() + \" \" + " +
                 "schedule.getCourse().getTeacher().getFirstNameBg() + \" \" + " +
                 "schedule.getCourse().getTeacher().getLastNameBg())"),
@@ -46,7 +46,7 @@ public interface ScheduleMapper {
                 "schedule.getCourse().getTeacher().getFirstNameEn() + \" \" + " +
                 "schedule.getCourse().getTeacher().getLastNameEn())"),
     })
-    ScheduleDetailsModel entityToModel(Schedule schedule, GroupScheduleModel groupModel);
+    ScheduleDetailsModel entityToScheduleModel(Schedule schedule);
 
     @AfterMapping
     default void updateAcademicYear(Schedule schedule, @MappingTarget CourseScheduleModel scheduleModel) {

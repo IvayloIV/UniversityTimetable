@@ -40,6 +40,10 @@ public class Schedule {
     private Course course;
 
     @ManyToOne
+    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    private Group group;
+
+    @ManyToOne
     @JoinColumn(name = "academic_year_id", referencedColumnName = "id", nullable = false)
     private AcademicYear academicYear;
 }

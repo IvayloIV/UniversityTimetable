@@ -181,9 +181,11 @@ CREATE TABLE schedule (
     hex_color VARCHAR(15) NOT NULL,
     status VARCHAR(15) NOT NULL,
     course_id BIGINT NOT NULL,
+    group_id BIGINT,
     academic_year_id BIGINT NOT NULL,
     FOREIGN KEY (course_id) REFERENCES course (id),
-    FOREIGN KEY (academic_year_id) REFERENCES academic_year (id)
+    FOREIGN KEY (academic_year_id) REFERENCES academic_year (id),
+    FOREIGN KEY (group_id) REFERENCES university_group (id)
 );
 
 ALTER TABLE schedule ADD CONSTRAINT end_time_check CHECK (end_time > start_time);
