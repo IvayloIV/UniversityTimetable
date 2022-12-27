@@ -1,14 +1,18 @@
 package bg.tuvarna.universitytimetable.mapper;
 
+import bg.tuvarna.universitytimetable.dto.data.ScheduleEditData;
 import bg.tuvarna.universitytimetable.dto.model.CourseScheduleModel;
-import bg.tuvarna.universitytimetable.dto.model.GroupScheduleModel;
 import bg.tuvarna.universitytimetable.dto.model.ScheduleDetailsModel;
+import bg.tuvarna.universitytimetable.dto.model.ScheduleEditModel;
 import bg.tuvarna.universitytimetable.entity.AcademicYear;
 import bg.tuvarna.universitytimetable.entity.Schedule;
 import bg.tuvarna.universitytimetable.entity.enums.Semester;
 import org.mapstruct.*;
 
+import java.time.DayOfWeek;
+
 @Mapper(componentModel = "spring",
+        imports = {DayOfWeek.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ScheduleMapper {
 
@@ -47,6 +51,28 @@ public interface ScheduleMapper {
                 "schedule.getCourse().getTeacher().getLastNameEn())"),
     })
     ScheduleDetailsModel entityToScheduleModel(Schedule schedule);
+
+    @Mappings({
+        @Mapping(target = "id", source = "schedule.id"),
+        @Mapping(target = "degree", source = "schedule.course.degree"),
+        @Mapping(target = "facultyName", source = "schedule.course.specialty.department.faculty.nameBg"),
+        @Mapping(target = "departmentName", source = "schedule.course.specialty.department.nameBg"),
+        @Mapping(target = "specialtyName", source = "schedule.course.specialty.nameBg"),
+        @Mapping(target = "year", source = "schedule.course.year"),
+        @Mapping(target = "mode", source = "schedule.course.mode"),
+        @Mapping(target = "groupName", source = "schedule.group.name"),
+        @Mapping(target = "subjectName", source = "schedule.course.subject.nameBg"),
+        @Mapping(target = "subjectType", source = "schedule.course.subject.type"),
+        @Mapping(target = "day", source = "schedule.day.value"),
+        @Mapping(target = "startTime", source = "schedule.startTime"),
+        @Mapping(target = "endTime", source = "schedule.endTime")
+    })
+    ScheduleEditModel entityToEditModel(Schedule schedule);
+
+    @Mapping(target = "day", expression = "java(DayOfWeek.of(scheduleEditData.getDay()))")
+    void updateSchedule(ScheduleEditData scheduleEditData, @MappingTarget Schedule schedule);
+
+    void updateScheduleModel(ScheduleEditData scheduleEditData, @MappingTarget ScheduleEditModel scheduleEditModel);
 
     @AfterMapping
     default void updateAcademicYear(Schedule schedule, @MappingTarget CourseScheduleModel scheduleModel) {

@@ -1,0 +1,102 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="editSchedule">
+    <h1 class="text-center text-dark mt-5" th:text="#{scheduleEdit.title}"></h1>
+    <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50">
+    <form class="form" th:object="${schedule}" th:action="@{/schedule/edit/{scheduleId}(scheduleId=*{id})}" th:method="POST">
+        <div class="w-75 mx-auto mt-5">
+            <div class="row my-3 align-items-center">
+                <div class="col fw-bold">
+                    <span th:text="#{scheduleEdit.degree} + ':'"></span>
+                </div>
+                <div class="col-3" style="width:22%;">
+                    <input class="form-control" th:value="*{@resourceBundleUtil.getMessage(degree.key)}" readonly="readonly">
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{scheduleEdit.faculty} + ':'"></span>
+                </div>
+                <div class="col-3" style="width:22%;">
+                    <input class="form-control" th:value="*{facultyName}" readonly="readonly">
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{scheduleEdit.department} + ':'"></span>
+                </div>
+                <div class="col-3" style="width:22%;">
+                    <input class="form-control" th:value="*{departmentName}" readonly="readonly">
+                </div>
+            </div>
+            <hr class="hr-2 border-top border-2 mx-auto opacity-25">
+            <div class="row my-3 align-items-center">
+                <div class="col fw-bold">
+                    <span th:text="#{scheduleEdit.specialty} + ':'"></span>
+                </div>
+                <div class="col-3" style="width:22%;">
+                    <input class="form-control" th:value="*{specialtyName}" readonly="readonly">
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{scheduleEdit.year} + ':'"></span>
+                </div>
+                <div class="col-3" style="width:22%;">
+                    <input class="form-control" th:value="*{year}" readonly="readonly">
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{scheduleEdit.mode} + ':'"></span>
+                </div>
+                <div class="col-3" style="width:22%;">
+                    <input class="form-control" th:value="*{@resourceBundleUtil.getMessage(mode.key)}" readonly="readonly">
+                </div>
+            </div>
+            <hr class="hr-2 border-top border-2 mx-auto opacity-25">
+            <div class="row my-3 align-items-center">
+                <th:block th:if="*{groupName != null}">
+                    <div class="col fw-bold">
+                        <span th:text="#{scheduleEdit.group} + ':'"></span>
+                    </div>
+                    <div class="col-3" style="width:22%;">
+                        <input class="form-control" th:value="*{groupName}" readonly="readonly">
+                    </div>
+                </th:block>
+                <div class="col fw-bold">
+                    <span th:text="#{scheduleEdit.subject} + ':'"></span>
+                </div>
+                <div class="col-3" th:style="*{groupName != null} ? 'width:22%;' : 'width:38.8%;'">
+                    <input class="form-control" th:value="*{subjectName}" readonly="readonly">
+                </div>
+                <div class="col fw-bold" th:classappend="*{groupName != null} ? '' : 'text-center'">
+                    <span th:text="#{scheduleEdit.type} + ':'"></span>
+                </div>
+                <div class="col-3" th:style="*{groupName != null} ? 'width:22%;' : 'width:38.8%;'">
+                    <input class="form-control" th:value="*{@resourceBundleUtil.getMessage(subjectType.key)}" readonly="readonly">
+                </div>
+            </div>
+            <hr class="hr-2 border-top border-2 mx-auto opacity-25">
+            <div class="row my-3 align-items-center">
+                <div class="col fw-bold">
+                    <span th:text="#{scheduleEdit.day} + ':'"></span>
+                </div>
+                <div class="col-3" style="width:22%;">
+                    <select class="form-select" th:field="*{day}">
+                        <option th:each="day,rowStatDay : ${daysOfWeek}"
+                                th:value="${rowStatDay.index + 1}"
+                                th:text="${@dayOfWeekUtil.getDay(day,'bg')}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{scheduleEdit.startTime} + ':'"></span>
+                </div>
+                <div class="col-3" style="width:22%;">
+                    <input class="form-control" type="time" th:field="*{startTime}"/>
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{scheduleEdit.endTime} + ':'"></span>
+                </div>
+                <div class="col-3" style="width:22%;">
+                    <input class="form-control" type="time" th:field="*{endTime}"/>
+                </div>
+            </div>
+            <hr class="hr-2 border-top border-2 mx-auto opacity-25">
+        </div>
+        <div class="button-holder d-flex justify-content-center mt-4" style="margin-bottom:8.6rem;">
+            <button type="submit" class="btn btn-primary" th:text="#{scheduleEdit.save}"></button>
+        </div>
+    </form>
+</th:block>

@@ -1,16 +1,17 @@
 package bg.tuvarna.universitytimetable.service.impl;
 
-import bg.tuvarna.universitytimetable.dto.model.CourseScheduleModel;
-import bg.tuvarna.universitytimetable.dto.model.FacultyScheduleModel;
-import bg.tuvarna.universitytimetable.dto.model.GroupScheduleModel;
-import bg.tuvarna.universitytimetable.dto.model.ScheduleDetailsModel;
+import bg.tuvarna.universitytimetable.dto.data.ScheduleEditData;
+import bg.tuvarna.universitytimetable.dto.model.*;
+import bg.tuvarna.universitytimetable.entity.Course;
 import bg.tuvarna.universitytimetable.entity.Faculty;
 import bg.tuvarna.universitytimetable.entity.Schedule;
+import bg.tuvarna.universitytimetable.entity.enums.CourseWeek;
 import bg.tuvarna.universitytimetable.entity.enums.ScheduleStatus;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.GroupMapper;
 import bg.tuvarna.universitytimetable.mapper.ScheduleMapper;
 import bg.tuvarna.universitytimetable.repository.ScheduleRepository;
+import bg.tuvarna.universitytimetable.repository.specification.ScheduleSpecification;
 import bg.tuvarna.universitytimetable.service.ScheduleService;
 import bg.tuvarna.universitytimetable.util.ResourceBundleUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static bg.tuvarna.universitytimetable.repository.specification.ScheduleSpecification.*;
+import static org.springframework.data.jpa.domain.Specification.*;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -105,13 +110,96 @@ public class ScheduleServiceImpl implements ScheduleService {
     public void save() {
         if (scheduleRepository.countByStatus(ScheduleStatus.PENDING) == 0) {
             String message = resourceBundleUtil.getMessage("scheduleList.timetablesNotFound");
-            List<DayOfWeek> daysOfWeek = List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
-                    DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
-            throw new ValidationException(message, "schedule/generate", Map.of("daysOfWeek", daysOfWeek));
+            throw new ValidationException(message, "schedule/generate", Map.of("daysOfWeek", getDaysOfWeek()));
         }
 
         scheduleRepository.updateStatus(ScheduleStatus.ACTIVE, ScheduleStatus.INACTIVE);
         scheduleRepository.updateStatus(ScheduleStatus.PENDING, ScheduleStatus.ACTIVE);
+    }
+
+    @Override
+    public ScheduleEditModel getEditModel(Long id) {
+        return scheduleMapper.entityToEditModel(findById(id));
+    }
+
+    @Override
+    public void edit(Long id, ScheduleEditData scheduleEditData) {
+        Schedule schedule = findById(id);
+        LocalTime startTime = scheduleEditData.getStartTime();
+        LocalTime endTime = scheduleEditData.getEndTime();
+
+        if (!schedule.getStatus().equals(ScheduleStatus.PENDING)) {
+            throwEditScheduleException("scheduleEdit.notAllowed", schedule, scheduleEditData);
+        }
+
+        if (startTime.compareTo(LocalTime.of(7, 15)) < 0
+                || startTime.compareTo(LocalTime.of(20, 0)) > 0) {
+            throwEditScheduleException("scheduleEdit.startTimeIntervalValidation", schedule, scheduleEditData);
+        }
+
+        if (endTime.compareTo(LocalTime.of(7, 15)) < 0
+                || endTime.compareTo(LocalTime.of(20, 0)) > 0) {
+            throwEditScheduleException("scheduleEdit.endTimeIntervalValidation", schedule, scheduleEditData);
+        }
+
+        if (startTime.getMinute() % 15 != 0) {
+            throwEditScheduleException("scheduleEdit.startTimeMinutesValidation", schedule, scheduleEditData);
+        }
+
+        if (endTime.getMinute() % 15 != 0) {
+            throwEditScheduleException("scheduleEdit.endTimeMinutesValidation", schedule, scheduleEditData);
+        }
+
+        if (startTime.compareTo(endTime) >= 0) {
+            throwEditScheduleException("scheduleEdit.endTimeBeforeTheStartValidation", schedule, scheduleEditData);
+        }
+
+        List<Schedule> schedules = scheduleRepository.findAll(
+            where(withStatus(ScheduleStatus.PENDING))
+                .and(withDay(DayOfWeek.of(scheduleEditData.getDay())))
+                .and(withStartTimeBefore(startTime))
+                .and(withEndTimeAfter(endTime))
+        );
+
+        for (Schedule s : schedules) {
+            if (s.getId().equals(schedule.getId())) {
+                continue;
+            }
+
+            Course currCourse = s.getCourse();
+            Course course = schedule.getCourse();
+
+            if (currCourse.getTeacher().getId().equals(course.getTeacher().getId()) &&
+                (currCourse.getWeek().equals(CourseWeek.ALL) || course.getWeek().equals(CourseWeek.ALL) || currCourse.getWeek().equals(course.getWeek())) &&
+                (!currCourse.getSubject().getId().equals(course.getSubject().getId()) ||
+                 !currCourse.getRoom().getId().equals(course.getRoom().getId()))) {
+                throwEditScheduleException("scheduleEdit.busyTeacherValidation", schedule, scheduleEditData);
+            }
+
+            if (currCourse.getRoom().getId().equals(course.getRoom().getId()) &&
+                (currCourse.getWeek().equals(CourseWeek.ALL) || course.getWeek().equals(CourseWeek.ALL) || currCourse.getWeek().equals(course.getWeek())) &&
+                (!currCourse.getSubject().getId().equals(course.getSubject().getId()) ||
+                 !currCourse.getTeacher().getId().equals(course.getTeacher().getId()))) {
+                throwEditScheduleException("scheduleEdit.occupiedRoomValidation", schedule, scheduleEditData);
+            }
+
+            if (currCourse.getSpecialty().getId().equals(course.getSpecialty().getId()) &&
+                currCourse.getDegree().equals(course.getDegree()) &&
+                currCourse.getYear().equals(course.getYear()) &&
+                currCourse.getMode().equals(course.getMode()) &&
+                (s.getGroup() == null || schedule.getGroup() == null ||
+                    s.getGroup().getId().equals(schedule.getGroup().getId()))) {
+                throwEditScheduleException("scheduleEdit.classOverlapValidation", schedule, scheduleEditData);
+            }
+        }
+
+        scheduleMapper.updateSchedule(scheduleEditData, schedule);
+        scheduleRepository.save(schedule);
+    }
+
+    private Schedule findById(Long id) {
+        return scheduleRepository.findById(id) //TODO: check if home page need some addition models
+            .orElseThrow(() -> new ValidationException(resourceBundleUtil.getMessage("scheduleEdit.notFound"), "/"));
     }
 
     private void addNewSchedule(ScheduleDetailsModel scheduleModel, CourseScheduleModel courseModel) {
@@ -129,5 +217,20 @@ public class ScheduleServiceImpl implements ScheduleService {
         defaultGroup.setId(-1L);
         defaultGroup.setName("");
         courseModel.getGroups().add(defaultGroup);
+    }
+
+    private void throwEditScheduleException(String messageKey, Schedule schedule, ScheduleEditData scheduleEditData) {
+        String message = resourceBundleUtil.getMessage(messageKey);
+        ScheduleEditModel scheduleEditModel = scheduleMapper.entityToEditModel(schedule);
+        scheduleMapper.updateScheduleModel(scheduleEditData, scheduleEditModel);
+
+        throw new ValidationException(message, "schedule/edit",
+                Map.of("daysOfWeek", getDaysOfWeek(),
+                        "schedule", scheduleEditModel));
+    }
+
+    private List<DayOfWeek> getDaysOfWeek() {
+        return List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
     }
 }

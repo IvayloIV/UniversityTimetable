@@ -1,13 +1,11 @@
 
 package bg.tuvarna.universitytimetable.web.controller;
 
+import bg.tuvarna.universitytimetable.dto.data.ScheduleEditData;
 import bg.tuvarna.universitytimetable.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.DayOfWeek;
@@ -39,6 +37,19 @@ public class ScheduleController extends BaseController {
     @PostMapping("/save")
     public ModelAndView saveSchedules() {
         scheduleService.save();
+        return redirect("/schedule/generate");
+    }
+
+    @GetMapping("/edit/{id}")
+    public ModelAndView editSchedule(@PathVariable Long id, ModelAndView modelAndView) {
+        modelAndView.addObject("schedule", scheduleService.getEditModel(id));
+        return view("schedule/edit", modelAndView);
+    }
+
+    @PostMapping("/edit/{id}")
+    public ModelAndView editSchedule(@PathVariable Long id,
+                                     @ModelAttribute("scheduleEditData") ScheduleEditData scheduleEditData) {
+        scheduleService.edit(id, scheduleEditData);
         return redirect("/schedule/generate");
     }
 }
