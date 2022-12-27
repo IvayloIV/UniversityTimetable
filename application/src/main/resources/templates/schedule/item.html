@@ -54,7 +54,9 @@
                                         th:rowspan="${course.group == null and groupRowStat.index == 0} ? *{groups.size} : 1"
                                         th:style="'background-color:' + ${course.hexColor}"
                                         th:with="counter=${@counterUtil.setNum(colSpan)}">
-                                            <a th:href="@{/schedule/edit/{scheduleId}(scheduleId=${course.id})}" class="text-dark text-decoration-none">
+                                            <a th:href="@{/schedule/edit/{scheduleId}(scheduleId=${course.id})}"
+                                               class="text-dark text-decoration-none"
+                                               th:style="${disableEdit} ? 'pointer-events:none;' : ''">
                                                 <div class="fw-bold"
                                                      th:text="${@resourceBundleUtil.getMessage(course.subjectType.abbreviation,language)} + ' ' + ${language == 'bg' ? course.subjectNameBg : course.subjectNameEn}">
                                                 </div>

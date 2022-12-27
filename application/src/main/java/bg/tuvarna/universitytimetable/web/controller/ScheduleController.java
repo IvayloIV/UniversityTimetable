@@ -2,6 +2,7 @@
 package bg.tuvarna.universitytimetable.web.controller;
 
 import bg.tuvarna.universitytimetable.dto.data.ScheduleEditData;
+import bg.tuvarna.universitytimetable.dto.data.StudentScheduleSearchData;
 import bg.tuvarna.universitytimetable.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,5 +52,11 @@ public class ScheduleController extends BaseController {
                                      @ModelAttribute("scheduleEditData") ScheduleEditData scheduleEditData) {
         scheduleService.edit(id, scheduleEditData);
         return redirect("/schedule/generate");
+    }
+
+    @GetMapping("/list/students")
+    public ModelAndView studentsSchedule(StudentScheduleSearchData studentScheduleSearchData, ModelAndView modelAndView) {
+        scheduleService.loadStudentSchedule(studentScheduleSearchData, modelAndView);
+        return view("schedule/students", modelAndView);
     }
 }

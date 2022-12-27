@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .csrfTokenRepository(csrfTokenRepository())
             .and()
                 .authorizeRequests()
-                .antMatchers("/webjars/**", "/js/**", "/department/faculty/{id}", "/specialty/department/{departmentId}").permitAll()
+                .antMatchers("/", "/webjars/**", "/js/**", "/images/**", "/department/faculty/{id}", "/specialty/department/{departmentId}", "/schedule/list/students").permitAll()
                 .antMatchers("/user/login").anonymous()
                 .antMatchers("/teacher/create", "/teacher/delete/{id}", "/specialty/create", "/specialty/delete/{id}", "/subject/create",
                         "/department/{id}", "/specialty/{id}", "/subject/update/status/{id}", "/subject/delete/{id}", "/course/update/status/{id}",

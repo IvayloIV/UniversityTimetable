@@ -23,6 +23,7 @@ public interface SpecialtyMapper {
         @Mapping(source = "specialty.department.faculty.nameBg", target = "facultyName"),
         @Mapping(source = "specialty.department.nameBg", target = "departmentName"),
         @Mapping(source = "specialty.nameBg", target = "specialtyName"),
+        @Mapping(source = "specialty.nameEn", target = "specialtyNameEn")
     })
     SpecialtyListModel entityToModel(Specialty specialty);
 }

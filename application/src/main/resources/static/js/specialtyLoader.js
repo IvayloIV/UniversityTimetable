@@ -13,6 +13,7 @@ $(window).on('load', () => {
 
 function loadDepartments(facultySelect, departmentSelect, specialtySelect) {
     var facultyId = facultySelect.find(":selected").val();
+    var language = $('#language').val();
     if (facultyId > -1) {
         $.get(`/department/faculty/${facultyId}`)
             .then((res) => {
@@ -23,7 +24,7 @@ function loadDepartments(facultySelect, departmentSelect, specialtySelect) {
                     departmentSelect.empty();
                 }
                 res.forEach(d => departmentSelect.append(
-                    $('<option>').val(d.id).text(d.nameBg)
+                    $('<option>').val(d.id).text(language == 'en' ? d.nameEn : d.nameBg)
                         .attr("selected", departmentIdInput.val() == d.id)
                 ));
                 departmentIdInput.val('');
@@ -37,6 +38,8 @@ function loadDepartments(facultySelect, departmentSelect, specialtySelect) {
 
 function loadSpecialties(departmentSelect, specialtySelect) {
     var departmentId = departmentSelect.find(":selected").val();
+    var language = $('#language').val();
+    console.log(language);
     if (departmentId > -1) {
         $.get(`/specialty/department/${departmentId}`)
             .then((res) => {
@@ -47,7 +50,7 @@ function loadSpecialties(departmentSelect, specialtySelect) {
                     specialtySelect.empty();
                 }
                 res.forEach(s => specialtySelect.append(
-                    $('<option>').val(s.id).text(s.specialtyName)
+                    $('<option>').val(s.id).text(language == 'en' ? s.specialtyNameEn : s.specialtyName)
                         .attr("selected", specialtyIdInput.val() == s.id)
                 ));
                 specialtyIdInput.val('');

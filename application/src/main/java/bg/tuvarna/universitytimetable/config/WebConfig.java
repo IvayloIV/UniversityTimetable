@@ -1,6 +1,7 @@
 package bg.tuvarna.universitytimetable.config;
 
 import bg.tuvarna.universitytimetable.interceptor.PasswordUpdateInterceptor;
+import bg.tuvarna.universitytimetable.interceptor.ScheduleLanguageInterceptor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +18,12 @@ import java.util.Locale;
 public class WebConfig implements WebMvcConfigurer {
 
     private final PasswordUpdateInterceptor passwordUpdateInterceptor;
+    private final ScheduleLanguageInterceptor scheduleLanguageInterceptor;
 
-    public WebConfig(PasswordUpdateInterceptor passwordUpdateInterceptor) {
+    public WebConfig(PasswordUpdateInterceptor passwordUpdateInterceptor,
+                     ScheduleLanguageInterceptor scheduleLanguageInterceptor) {
         this.passwordUpdateInterceptor = passwordUpdateInterceptor;
+        this.scheduleLanguageInterceptor = scheduleLanguageInterceptor;
     }
 
     @Bean
@@ -49,7 +53,10 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
         registry.addInterceptor(passwordUpdateInterceptor)
-                .excludePathPatterns("/user/**", "/webjars/**", "/js/**", "/department/faculty/{id}",
-                        "/specialty/department/{departmentId}");
+                .excludePathPatterns("/", "/user/**", "/webjars/**", "/js/**", "/images/**", "/department/faculty/{id}",
+                        "/specialty/department/{departmentId}", "/schedule/list/students");
+        registry.addInterceptor(scheduleLanguageInterceptor)
+                .excludePathPatterns("/", "/webjars/**", "/js/**", "/images/**","/department/faculty/{id}",
+                        "/specialty/department/{departmentId}", "/schedule/list/students");
     }
 }

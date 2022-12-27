@@ -12,6 +12,7 @@ public class SpecialtyListModel {
     private String facultyName;
     private String departmentName;
     private String specialtyName;
+    private String specialtyNameEn;
 
     @DateTimeFormat(pattern = "dd.MM.yyyy HH:mm")
     private LocalDateTime createdDate;

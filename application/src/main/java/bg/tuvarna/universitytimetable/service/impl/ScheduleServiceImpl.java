@@ -1,24 +1,27 @@
 package bg.tuvarna.universitytimetable.service.impl;
 
 import bg.tuvarna.universitytimetable.dto.data.ScheduleEditData;
+import bg.tuvarna.universitytimetable.dto.data.StudentScheduleSearchData;
 import bg.tuvarna.universitytimetable.dto.model.*;
 import bg.tuvarna.universitytimetable.entity.Course;
 import bg.tuvarna.universitytimetable.entity.Faculty;
 import bg.tuvarna.universitytimetable.entity.Schedule;
-import bg.tuvarna.universitytimetable.entity.enums.CourseWeek;
-import bg.tuvarna.universitytimetable.entity.enums.ScheduleStatus;
+import bg.tuvarna.universitytimetable.entity.enums.*;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.GroupMapper;
 import bg.tuvarna.universitytimetable.mapper.ScheduleMapper;
 import bg.tuvarna.universitytimetable.repository.ScheduleRepository;
-import bg.tuvarna.universitytimetable.repository.specification.ScheduleSpecification;
+import bg.tuvarna.universitytimetable.service.AcademicYearService;
+import bg.tuvarna.universitytimetable.service.FacultyService;
 import bg.tuvarna.universitytimetable.service.ScheduleService;
 import bg.tuvarna.universitytimetable.util.ResourceBundleUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -26,25 +29,32 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static bg.tuvarna.universitytimetable.repository.specification.ScheduleSpecification.*;
-import static org.springframework.data.jpa.domain.Specification.*;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
+@Slf4j
 public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final ResourceBundleUtil resourceBundleUtil;
     private final ScheduleMapper scheduleMapper;
     private final GroupMapper groupMapper;
+    private final FacultyService facultyService;
+    private final AcademicYearService academicYearService;
 
     @Autowired
     public ScheduleServiceImpl(ScheduleRepository scheduleRepository,
                                ResourceBundleUtil resourceBundleUtil,
                                ScheduleMapper scheduleMapper,
-                               GroupMapper groupMapper) {
+                               GroupMapper groupMapper,
+                               FacultyService facultyService,
+                               AcademicYearService academicYearService) {
         this.scheduleRepository = scheduleRepository;
         this.resourceBundleUtil = resourceBundleUtil;
         this.scheduleMapper = scheduleMapper;
         this.groupMapper = groupMapper;
+        this.facultyService = facultyService;
+        this.academicYearService = academicYearService;
     }
 
     @Override
@@ -90,15 +100,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             }
 
             ScheduleDetailsModel scheduleModel = scheduleMapper.entityToScheduleModel(schedule);
-
-            if (scheduleModel.getGroup() != null) {
-                SortedSet<GroupScheduleModel> groupModelsSet = courseModel.getGroups();
-                if (groupModelsSet.size() == 1 && groupModelsSet.first().getId().equals(-1L)) {
-                    groupModelsSet.removeIf(g -> g.getId().equals(-1L));
-                }
-                groupModelsSet.add(scheduleModel.getGroup());
-            }
-
+            addNewGroup(scheduleModel, courseModel);
             addNewSchedule(scheduleModel, courseModel);
         }
 
@@ -155,7 +157,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         List<Schedule> schedules = scheduleRepository.findAll(
-            where(withStatus(ScheduleStatus.PENDING))
+            where(withStatuses(List.of(ScheduleStatus.PENDING)))
                 .and(withDay(DayOfWeek.of(scheduleEditData.getDay())))
                 .and(withStartTimeBefore(startTime))
                 .and(withEndTimeAfter(endTime))
@@ -197,6 +199,59 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleRepository.save(schedule);
     }
 
+    @Override
+    public void loadStudentSchedule(StudentScheduleSearchData studentScheduleSearchData, ModelAndView modelAndView) {
+        boolean fieldsNotEmpty = Arrays.stream(StudentScheduleSearchData.class.getDeclaredFields())
+                .allMatch(s -> {
+                    s.setAccessible(true);
+                    try {
+                        return s.get(studentScheduleSearchData) != null;
+                    } catch (IllegalAccessException e) {
+                        log.error(e.getMessage());
+                        return false;
+                    }
+                });
+
+        if (fieldsNotEmpty) {
+            String[] academicYears = studentScheduleSearchData.getAcademicYear().split("/");
+            Short academicYear = Short.parseShort(academicYears[studentScheduleSearchData.getSemester().equals(Semester.WINTER) ? 0 : 1]);
+
+            List<Schedule> schedules = scheduleRepository.findAll(
+                where(withStatuses(List.of(ScheduleStatus.ACTIVE, ScheduleStatus.INACTIVE))
+                    .and(withAcademicYear(academicYear))
+                    .and(withSemester(studentScheduleSearchData.getSemester()))
+                    .and(withDegree(studentScheduleSearchData.getDegree()))
+                    .and(withSpecialtyId(studentScheduleSearchData.getSpecialtyId()))
+                    .and(withCourseYear(studentScheduleSearchData.getCourseYear()))
+                    .and(withCourseMode(studentScheduleSearchData.getMode()))
+                )
+            );
+
+            if (schedules.size() > 0) {
+                CourseScheduleModel courseModel = scheduleMapper.entityToCourseModel(schedules.get(0));
+                courseModel.setGroups(new TreeSet<>());
+                addDefaultGroup(courseModel);
+                courseModel.setSchedules(new HashMap<>());
+
+                schedules.forEach(s -> {
+                    ScheduleDetailsModel scheduleModel = scheduleMapper.entityToScheduleModel(s);
+                    addNewGroup(scheduleModel, courseModel);
+                    addNewSchedule(scheduleModel, courseModel);
+                });
+
+                modelAndView.addObject("scheduleCourse", courseModel);
+                modelAndView.addObject("disableEdit", true);
+            }
+        }
+
+        modelAndView.addObject("faculties", facultyService.getList());
+        modelAndView.addObject("years", academicYearService.getYears());
+        modelAndView.addObject("semesters", Semester.values());
+        modelAndView.addObject("degrees", Degree.values());
+        modelAndView.addObject("courseYears", CourseYear.values());
+        modelAndView.addObject("courseModes", CourseMode.values());
+    }
+
     private Schedule findById(Long id) {
         return scheduleRepository.findById(id) //TODO: check if home page need some addition models
             .orElseThrow(() -> new ValidationException(resourceBundleUtil.getMessage("scheduleEdit.notFound"), "/"));
@@ -217,6 +272,16 @@ public class ScheduleServiceImpl implements ScheduleService {
         defaultGroup.setId(-1L);
         defaultGroup.setName("");
         courseModel.getGroups().add(defaultGroup);
+    }
+
+    private void addNewGroup(ScheduleDetailsModel scheduleModel, CourseScheduleModel courseModel) {
+        if (scheduleModel.getGroup() != null) {
+            SortedSet<GroupScheduleModel> groupModelsSet = courseModel.getGroups();
+            if (groupModelsSet.size() == 1 && groupModelsSet.first().getId().equals(-1L)) {
+                groupModelsSet.removeIf(g -> g.getId().equals(-1L));
+            }
+            groupModelsSet.add(scheduleModel.getGroup());
+        }
     }
 
     private void throwEditScheduleException(String messageKey, Schedule schedule, ScheduleEditData scheduleEditData) {

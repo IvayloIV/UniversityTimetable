@@ -1,0 +1,128 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="studentsSchedule">
+    <div class="d-flex justify-content-end pe-5">
+        <a th:href="@{/schedule/list/students(lang=bg,academicYear=${param.academicYear},semester=${param.semester},degree=${param.degree},facultyId=${param.facultyId},
+            departmentId=${param.departmentId},specialtyId=${param.specialtyId},courseYear=${param.courseYear},mode=${param.mode})}">
+            <img src="/images/bulgariaFlag.png" alt="bulgaria-flag" width="30px"/>
+        </a>
+        <a th:href="@{/schedule/list/students(lang=en,academicYear=${param.academicYear},semester=${param.semester},degree=${param.degree},facultyId=${param.facultyId},
+            departmentId=${param.departmentId},specialtyId=${param.specialtyId},courseYear=${param.courseYear},mode=${param.mode})}"
+            class="ms-2">
+            <img src="/images/unitedKingdomFlag.png" alt="united-kingdom-flag" width="30px"/>
+        </a>
+    </div>
+    <h1 class="text-center text-dark mt-5" th:text="#{studentSchedule.title}"></h1>
+    <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50">
+    <input type="hidden" id="language" th:value="${#locale}"/>
+    <form class="form" th:action="@{/schedule/list/students}" th:method="GET">
+        <div class="w-50 mx-auto mt-4">
+            <div class="row my-3 align-items-center">
+                <div class="col fw-bold">
+                    <span th:text="#{studentSchedule.academicYear} + ':'"></span>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" name="academicYear">
+                        <option th:each="year : ${years}"
+                                th:value="${year}"
+                                th:text="${year}"
+                                th:selected="${#strings.equals(param.academicYear, year)}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{studentSchedule.semester} + ':'"></span>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" name="semester">
+                        <option th:each="semester : ${semesters}"
+                                th:value="${semester}"
+                                th:text="${@resourceBundleUtil.getMessage(semester.key)}"
+                                th:selected="${#strings.equals(param.semester, semester)}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <hr class="hr-2 border-top border-2 mx-auto opacity-75">
+            <div class="row my-3 align-items-center">
+                <div class="col fw-bold">
+                    <span th:text="#{studentSchedule.degree} + ':'"></span>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" name="degree">
+                        <option th:each="degree : ${degrees}"
+                                th:value="${degree}"
+                                th:text="${@resourceBundleUtil.getMessage(degree.key)}"
+                                th:selected="${#strings.equals(param.degree, degree)}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{studentSchedule.faculty} + ':'"></span>
+                </div>
+                <div class="col-4">
+                    <select class="form-select faculty-select" name="facultyId">
+                        <option th:each="faculty : ${faculties}"
+                                th:value="${faculty.id}"
+                                th:text="${#strings.equals(#locale, 'en') ? faculty.nameEn : faculty.nameBg}"
+                                th:selected="${#strings.equals(param.facultyId, faculty.id)}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <hr class="hr-2 border-top border-2 mx-auto opacity-75">
+            <div class="row my-3 align-items-center">
+                <div class="col fw-bold">
+                    <span th:text="#{studentSchedule.department} + ':'"></span>
+                </div>
+                <div class="col-4">
+                    <input id="department-id" type="hidden" th:value="${param.departmentId}">
+                    <select class="form-select department-select" name="departmentId">
+                    </select>
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{studentSchedule.specialty} + ':'"></span>
+                </div>
+                <div class="col-4">
+                    <input id="specialty-id" type="hidden" th:value="${param.specialtyId}">
+                    <select class="form-select specialty-select" name="specialtyId">
+                    </select>
+                </div>
+            </div>
+            <hr class="hr-2 border-top border-2 mx-auto opacity-75">
+            <div class="row my-3 align-items-center">
+                <div class="col fw-bold">
+                    <span th:text="#{studentSchedule.course} + ':'"></span>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" name="courseYear">
+                        <option th:each="courseYear : ${courseYears}"
+                                th:value="${courseYear}"
+                                th:text="${courseYear}"
+                                th:selected="${#strings.equals(param.courseYear, courseYear)}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{studentSchedule.mode} + ':'"></span>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" name="mode">
+                        <option th:each="courseMode : ${courseModes}"
+                                th:value="${courseMode}"
+                                th:text="${@resourceBundleUtil.getMessage(courseMode.key)}"
+                                th:selected="${#strings.equals(param.mode, courseMode)}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <hr class="hr-2 border-top border-2 mx-auto opacity-75">
+        </div>
+        <div class="button-holder d-flex justify-content-center mt-4">
+            <button type="submit" class="btn btn-primary" th:text="#{studentSchedule.show}"></button>
+        </div>
+    </form>
+    <div class="mt-4"
+         th:if="${scheduleCourse != null}"
+         th:include="~{schedule/item}">
+    </div>
+    <script th:src="@{/js/specialtyLoader.js}"></script>
+</th:block>
