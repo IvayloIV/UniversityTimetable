@@ -12,3 +12,15 @@ spring:
     hibernate:
       dialect: org.hibernate.dialect.PostgreSQL82Dialect
       ddl-auto: none
+  mail:
+    username: timetable4study@gmail.com
+    password: ${GMAIL_PASSWORD}
+    host: smtp.gmail.com
+    port: 587
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

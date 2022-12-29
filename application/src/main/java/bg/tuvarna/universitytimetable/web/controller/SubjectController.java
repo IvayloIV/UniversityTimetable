@@ -11,11 +11,13 @@ import bg.tuvarna.universitytimetable.service.RoomService;
 import bg.tuvarna.universitytimetable.service.SubjectService;
 import bg.tuvarna.universitytimetable.service.TeacherService;
 import bg.tuvarna.universitytimetable.util.DayOfWeekUtil;
+import bg.tuvarna.universitytimetable.util.QueryParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -28,16 +30,19 @@ public class SubjectController extends BaseController {
     private final FacultyService facultyService;
     private final RoomService roomService;
     private final TeacherService teacherService;
+    private final QueryParamsUtil queryParamsUtil;
 
     @Autowired
     public SubjectController(SubjectService subjectService,
                              FacultyService facultyService,
                              RoomService roomService,
-                             TeacherService teacherService) {
+                             TeacherService teacherService,
+                             QueryParamsUtil queryParamsUtil) {
         this.subjectService = subjectService;
         this.facultyService = facultyService;
         this.roomService = roomService;
         this.teacherService = teacherService;
+        this.queryParamsUtil = queryParamsUtil;
     }
 
     @ModelAttribute("degrees")
@@ -109,9 +114,11 @@ public class SubjectController extends BaseController {
     }
 
     @PostMapping("/delete/{id}")
-    public ModelAndView delete(@PathVariable Long id, SubjectSearchData searchData) {
+    public ModelAndView delete(@PathVariable Long id,
+                               SubjectSearchData searchData,
+                               RedirectAttributes redirectAttributes) {
         subjectService.archiveSubject(id);
-        String queryParams = subjectService.modelToQueryParams(searchData);
-        return redirect("/subject/list" + queryParams);
+        queryParamsUtil.attachQueryParams(redirectAttributes, searchData);
+        return redirect("/subject/list");
     }
 }

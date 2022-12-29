@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+    <div th:text="${@resourceBundleUtil.getMessage('scheduleMail.introduction', language) + ','}"></div><br>
+    <div th:text="${@resourceBundleUtil.getMessage('scheduleMail.body1', language)}"></div>
+    <div th:text="${@resourceBundleUtil.getMessage('scheduleMail.body2', language)}"></div>
+    <div th:text="${@resourceBundleUtil.getMessage('scheduleMail.body3', language)}"></div><br>
+    <div th:text="${@resourceBundleUtil.getMessage('scheduleMail.closing1', language)}"></div>
+    <div th:text="${@resourceBundleUtil.getMessage('scheduleMail.closing2', language)}"></div>
+</body>
+</html>

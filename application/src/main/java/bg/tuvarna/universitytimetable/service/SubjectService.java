@@ -14,6 +14,4 @@ public interface SubjectService {
     String updateActiveStatus(Long id);
 
     void archiveSubject(Long id);
-
-    String modelToQueryParams(SubjectSearchData searchData);
 }

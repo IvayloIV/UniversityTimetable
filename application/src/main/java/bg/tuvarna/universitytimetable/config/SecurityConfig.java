@@ -29,11 +29,12 @@ public class SecurityConfig {
                 .csrfTokenRepository(csrfTokenRepository())
             .and()
                 .authorizeRequests()
-                .antMatchers("/", "/webjars/**", "/js/**", "/images/**", "/department/faculty/{id}", "/specialty/department/{departmentId}", "/schedule/list/students").permitAll()
+                .antMatchers("/", "/webjars/**", "/js/**", "/images/**", "/department/faculty/{id}", "/specialty/department/{departmentId}",
+                        "/schedule/list/students", "/schedule/download/students").permitAll()
                 .antMatchers("/user/login").anonymous()
                 .antMatchers("/teacher/create", "/teacher/delete/{id}", "/specialty/create", "/specialty/delete/{id}", "/subject/create",
                         "/department/{id}", "/specialty/{id}", "/subject/update/status/{id}", "/subject/delete/{id}", "/course/update/status/{id}",
-                        "/course/delete/{id}", "/schedule/generate", "/schedule/save", "/schedule/edit/{id}").hasAuthority("ADMIN")
+                        "/course/delete/{id}", "/schedule/generate", "/schedule/save", "/schedule/edit/{id}", "/schedule/notify/students").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
             .and()
                 .formLogin()

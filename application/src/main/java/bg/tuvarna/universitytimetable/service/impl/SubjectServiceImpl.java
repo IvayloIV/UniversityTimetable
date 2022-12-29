@@ -18,12 +18,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static bg.tuvarna.universitytimetable.repository.specification.SubjectSpecification.*;
@@ -170,25 +169,6 @@ public class SubjectServiceImpl implements SubjectService {
         Subject subject = findById(id);
         subject.setArchived(true);
         subjectRepository.save(subject);
-    }
-
-    @Override
-    public String modelToQueryParams(SubjectSearchData searchData) {
-        StringBuilder sb = new StringBuilder();
-        Field[] declaredFields = searchData.getClass().getDeclaredFields();
-        Arrays.stream(declaredFields).forEach(f -> {
-            try {
-                f.setAccessible(true);
-                Object value = f.get(searchData);
-                if (!ObjectUtils.isEmpty(value)) {
-                    sb.append(String.format("&%s=%s", f.getName(), value));
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        return "?" + sb.substring(1);
     }
 
     private Subject findById(Long id) {

@@ -1,29 +1,30 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="schedule">
-    <div>
-        <table class="table table-bordered border-dark mx-auto" style="border-collapse:collapse;width:90%;" th:object="${scheduleCourse}">
+    <div th:style="${pdfView != null ? 'margin-top:9rem;' : ''}">
+        <table style="border-collapse:collapse;width:100%;" th:object="${scheduleCourse}">
             <tbody th:with="language=*{degree.language}">
-                <tr class="fw-bold text-center">
-                    <td rowspan="3" th:unless="*{groups.first().id == -1}" class="border border-dark border-2"></td>
-                    <td colspan="8" th:text="*{year}" class="border border-dark border-2"></td>
+                <tr style="text-align:center;font-weight:bold;">
+                    <td rowspan="3" th:unless="*{groups.first().id == -1}" style="border:2px solid black;"></td>
+                    <td colspan="8" th:text="*{year}" style="padding:8px 2px;border:2px solid black;"></td>
                     <th:block th:with="semester=*{@resourceBundleUtil.getMessage(semester.key,degree.language)}">
-                        <td colspan="8" th:text="${#strings.toUpperCase(semester)}" class="border border-dark border-2"></td>
+                        <td colspan="8" th:text="${#strings.toUpperCase(semester)}" style="padding:8px 2px;border:2px solid black;"></td>
                     </th:block>
-                    <td rowspan="2" colspan="20" class="align-middle border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.itemTitle',language)}"></td>
-                    <td colspan="8" class="border border-dark border-2" th:text="${language == 'bg'} ? *{departmentNameBg} : *{departmentNameEn}"></td>
-                    <td colspan="4" class="border border-dark border-2" th:text="${language == 'bg'} ? *{specialtyNameBg} : *{specialtyNameEn}"></td>
-                    <td colspan="8" class="border border-dark border-2" th:text="*{@resourceBundleUtil.getMessage(degree.key,degree.language)}"></td>
+                    <td rowspan="2" colspan="20" th:text="${@resourceBundleUtil.getMessage('scheduleList.itemTitle',language)}" style="padding:8px 2px;border:2px solid black;vertical-align:middle;"></td>
+                    <td colspan="8" th:text="${language == 'bg'} ? *{departmentNameBg} : *{departmentNameEn}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <td colspan="4" th:text="${language == 'bg'} ? *{specialtyNameBg} : *{specialtyNameEn}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <td colspan="8" th:text="*{@resourceBundleUtil.getMessage(degree.key,degree.language)}" style="padding:8px 2px;border:2px solid black;"></td>
                 </tr>
-                <tr class="text-center">
-                    <td colspan="8" class="border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.schoolYear',language)}"></td>
-                    <td colspan="8" class="border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.semester',language)}"></td>
-                    <td colspan="8" class="border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.department',language)}"></td>
-                    <td colspan="4" class="border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.specialty',language)}"></td>
-                    <td colspan="4" class="fw-bold border border-dark border-2" th:text="*{courseYear} + ' ' + ${@resourceBundleUtil.getMessage('scheduleList.course',language)}"></td>
-                    <td colspan="4" class="fw-bold border border-dark border-2" th:text="*{@resourceBundleUtil.getMessage(mode.key,degree.language)}"></td>
+                <tr style="text-align:center;">
+                    <td colspan="8" th:text="${@resourceBundleUtil.getMessage('scheduleList.schoolYear',language)}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <td colspan="8" th:text="${@resourceBundleUtil.getMessage('scheduleList.semester',language)}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <td colspan="8" th:text="${@resourceBundleUtil.getMessage('scheduleList.department',language)}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <td colspan="4" th:text="${@resourceBundleUtil.getMessage('scheduleList.specialty',language)}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <td colspan="4" th:text="*{courseYear} + ' ' + ${@resourceBundleUtil.getMessage('scheduleList.course',language)}" style="padding:8px 2px;border:2px solid black;font-weight:bold;"></td>
+                    <td colspan="4" th:text="*{@resourceBundleUtil.getMessage(mode.key,degree.language)}" style="padding:8px 2px;border:2px solid black;font-weight:bold;"></td>
                 </tr>
-                <tr class="text-center align-middle">
-                    <td colspan="4" class="border border-dark border-2" th:text="${@resourceBundleUtil.getMessage('scheduleList.dayTime',language)}"></td>
-                    <td colspan="4" class="px-0 border border-dark border-2"
+                <tr style="text-align:center;vertical-align:middle;">
+                    <td colspan="4" th:text="${@resourceBundleUtil.getMessage('scheduleList.dayTime',language)}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <td colspan="4"
+                        style="padding:8px 0px;border:2px solid black;"
                         th:each="h : ${#numbers.sequence(7,19)}">
                             <th:block th:text="${h}"></th:block><sup>15</sup>
                             -
@@ -31,16 +32,14 @@
                     </td>
                 </tr>
                 <th:block th:each="dayOfWeek,dayOfWeekRowStat: ${daysOfWeek}">
-                    <tr class="text-center" th:each="group,groupRowStat: *{groups}" th:with="counter=0">
-                        <td class="align-bottom"
-                            th:text="${group.name} + ' ' + ${@resourceBundleUtil.getMessage('scheduleList.group',language)}"
+                    <tr th:each="group,groupRowStat: *{groups}" th:with="counter=0" style="text-align:center;">
+                        <td th:text="${group.name} + ' ' + ${@resourceBundleUtil.getMessage('scheduleList.group',language)}"
                             th:unless="${group.id == -1}"
-                            th:style="'border-left:2px solid black;border-right:2px solid black;border-top:0px;' + ${groupRowStat.last ? 'border-bottom: 2px solid black;' : ''}">
+                            th:style="'vertical-align:bottom;padding:20px 8px 8px 8px;border-left:2px solid black;border-right:2px solid black;border-top:0px;' + ${groupRowStat.last ? 'border-bottom: 2px solid black;' : 'border-bottom: 1px solid black;'}">
                         </td>
                         <td colspan="4"
                             th:rowspan="*{groups.size}"
-                            class="align-middle px-0 border border-dark border-2"
-                            style="writing-mode:vertical-rl;transform:rotate(180deg);"
+                            style="transform:rotate(270deg);vertical-align:middle;padding:3rem 0rem;border:2px solid black;"
                             th:if="${groupRowStat.index == 0}"
                             th:text="${@dayOfWeekUtil.getDay(dayOfWeek,language)}"></td>
                         <th:block th:each="h,hourRowStat : ${#numbers.sequence(7,19)}">
@@ -49,41 +48,24 @@
                                 <th:block th:each="course: ${scheduleCourse.schedules.get(time)}"
                                           th:with="colSpan=${((course.getEndTime().getHour() * 60 + course.getEndTime().getMinute()) - ((h + m / 60) * 60 + (m % 60))) / 15}">
                                     <td th:if="${course.day == dayOfWeek and ((course.group == null and groupRowStat.index == 0) or group.id == course.group?.id)}"
-                                        class="p-1 align-middle border border-dark border-2"
                                         th:colspan="${colSpan}"
                                         th:rowspan="${course.group == null and groupRowStat.index == 0} ? *{groups.size} : 1"
-                                        th:style="'background-color:' + ${course.hexColor}"
+                                        th:style="'vertical-align:middle;border:2px solid black;padding:0.25rem;background-color:' + ${course.hexColor}"
                                         th:with="counter=${@counterUtil.setNum(colSpan)}">
                                             <a th:href="@{/schedule/edit/{scheduleId}(scheduleId=${course.id})}"
-                                               class="text-dark text-decoration-none"
-                                               th:style="${disableEdit} ? 'pointer-events:none;' : ''">
-                                                <div class="fw-bold"
-                                                     th:text="${@resourceBundleUtil.getMessage(course.subjectType.abbreviation,language)} + ' ' + ${language == 'bg' ? course.subjectNameBg : course.subjectNameEn}">
-                                                </div>
-                                                <div class="fw-bold d-flex justify-content-center" th:if="${course.week.name != 'ALL' or (course.startWeek != null and course.endWeek != null)}">
-                                                    <span th:if="${course.week.name != 'ALL'}"
-                                                              th:with="courseWeek=${@resourceBundleUtil.getMessage(course.week.key,language)}"
-                                                              th:text="${#strings.toLowerCase(courseWeek)}">
-                                                    </span>
-                                                    <span th:if="${course.week.name != 'ALL' and course.startWeek != null and course.endWeek != null}">(</span>
-                                                    <span th:if="${course.startWeek != null and course.endWeek != null}"
-                                                              th:text="${course.startWeek} + '-' + ${course.endWeek}">
-                                                    </span>
-                                                    <span th:if="${course.week.name != 'ALL' and course.endWeek != null and course.endWeek != null}">)</span>&nbsp;
-                                                    <span th:text="${@resourceBundleUtil.getMessage('scheduleList.week',language)}"></span>
-                                                </div>
-                                                <div th:text="${language == 'bg' ? course.teacherNameBg : course.teacherNameEn}"></div>
-                                                <div th:text="${language == 'bg' ? course.roomNumberBg : course.roomNumberEn}"></div>
+                                               style="text-decoration:none;color:black;"
+                                               th:unless="${disableEdit}">
+                                                <th:block th:include="~{schedule/itemContent}"></th:block>
                                             </a>
+                                            <th:block th:if="${disableEdit}" th:include="~{schedule/itemContent}"></th:block>
                                     </td>
                                     <th:block th:if="${course.day == dayOfWeek and course.group == null and groupRowStat.index > 0}"
                                               th:with="counter=${@counterUtil.setNum(colSpan)}">
                                     </th:block>
                                 </th:block>
                                 <td th:unless="${@counterUtil.getAndDecrement() > 0}"
-                                    class="p-1"
-                                    th:style="'border-left:0px;' + ${m % 60 == 0 ? 'border-right:2px solid black;' : 'border-right:1px dotted black;'}
-                                        + ${groupRowStat.last ? 'border-bottom: 2px solid black;' : ''}">
+                                    th:style="'padding:0.25rem;border-left:0px;' + ${m % 60 == 0 ? 'border-right:2px solid black;' : 'border-right:1px dotted black;'}
+                                        + ${groupRowStat.last ? 'border-bottom: 2px solid black;' : 'border-bottom: 1px solid black;'}">
                                 </td>
                             </th:block>
                         </th:block>

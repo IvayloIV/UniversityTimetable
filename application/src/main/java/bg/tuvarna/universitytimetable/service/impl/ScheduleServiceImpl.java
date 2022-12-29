@@ -8,21 +8,26 @@ import bg.tuvarna.universitytimetable.entity.Faculty;
 import bg.tuvarna.universitytimetable.entity.Schedule;
 import bg.tuvarna.universitytimetable.entity.enums.*;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
-import bg.tuvarna.universitytimetable.mapper.GroupMapper;
 import bg.tuvarna.universitytimetable.mapper.ScheduleMapper;
 import bg.tuvarna.universitytimetable.repository.ScheduleRepository;
-import bg.tuvarna.universitytimetable.service.AcademicYearService;
-import bg.tuvarna.universitytimetable.service.FacultyService;
-import bg.tuvarna.universitytimetable.service.ScheduleService;
+import bg.tuvarna.universitytimetable.service.*;
+import bg.tuvarna.universitytimetable.util.QueryParamsUtil;
 import bg.tuvarna.universitytimetable.util.ResourceBundleUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -38,23 +43,32 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ResourceBundleUtil resourceBundleUtil;
     private final ScheduleMapper scheduleMapper;
-    private final GroupMapper groupMapper;
     private final FacultyService facultyService;
     private final AcademicYearService academicYearService;
+    private final PdfService pdfService;
+    private final CsvParserService csvParserService;
+    private final EmailService emailService;
+    private final QueryParamsUtil queryParamsUtil;
 
     @Autowired
     public ScheduleServiceImpl(ScheduleRepository scheduleRepository,
                                ResourceBundleUtil resourceBundleUtil,
                                ScheduleMapper scheduleMapper,
-                               GroupMapper groupMapper,
                                FacultyService facultyService,
-                               AcademicYearService academicYearService) {
+                               AcademicYearService academicYearService,
+                               PdfService pdfService,
+                               CsvParserService csvParserService,
+                               EmailService emailService,
+                               QueryParamsUtil queryParamsUtil) {
         this.scheduleRepository = scheduleRepository;
         this.resourceBundleUtil = resourceBundleUtil;
         this.scheduleMapper = scheduleMapper;
-        this.groupMapper = groupMapper;
         this.facultyService = facultyService;
         this.academicYearService = academicYearService;
+        this.pdfService = pdfService;
+        this.csvParserService = csvParserService;
+        this.emailService = emailService;
+        this.queryParamsUtil = queryParamsUtil;
     }
 
     @Override
@@ -201,6 +215,49 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public void loadStudentSchedule(StudentScheduleSearchData studentScheduleSearchData, ModelAndView modelAndView) {
+        CourseScheduleModel courseModel = getCourseScheduleModel(studentScheduleSearchData);
+
+        if (courseModel != null) {
+            modelAndView.addObject("scheduleCourse", courseModel);
+            modelAndView.addObject("disableEdit", true);
+        }
+
+        modelAndView.addObject("faculties", facultyService.getList());
+        modelAndView.addObject("years", academicYearService.getYears());
+        modelAndView.addObject("semesters", Semester.values());
+        modelAndView.addObject("degrees", Degree.values());
+        modelAndView.addObject("courseYears", CourseYear.values());
+        modelAndView.addObject("courseModes", CourseMode.values());
+    }
+
+    @Override
+    public ResponseEntity<Resource> generateStudentSchedule(StudentScheduleSearchData studentScheduleSearchData) {
+        CourseScheduleModel courseModel = getCourseScheduleModel(studentScheduleSearchData);
+        Resource resource = pdfService.generateSchedule(courseModel, getDaysOfWeek());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=timetable.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
+    }
+
+    @Override
+    public void notifyStudents(MultipartFile studentsNameCsv, StudentScheduleSearchData searchData, RedirectAttributes attributes) throws IOException {
+        String messageKey;
+
+        if (studentsNameCsv.isEmpty()) {
+            messageKey = "studentSchedule.fileNotFound";
+        } else {
+            List<String> emails = csvParserService.getEmails(studentsNameCsv);
+            CourseScheduleModel courseScheduleModel = getCourseScheduleModel(searchData);
+            Resource resource = pdfService.generateSchedule(courseScheduleModel, getDaysOfWeek());
+            emailService.sendScheduleNotifications(courseScheduleModel.getDegree().getLanguage(), emails, resource);
+            messageKey = "studentSchedule.sentMails";
+        }
+        attributes.addFlashAttribute("message", resourceBundleUtil.getMessage(messageKey));
+        queryParamsUtil.attachQueryParams(attributes, searchData);
+    }
+
+    private CourseScheduleModel getCourseScheduleModel(StudentScheduleSearchData studentScheduleSearchData) {
         boolean fieldsNotEmpty = Arrays.stream(StudentScheduleSearchData.class.getDeclaredFields())
                 .allMatch(s -> {
                     s.setAccessible(true);
@@ -217,14 +274,14 @@ public class ScheduleServiceImpl implements ScheduleService {
             Short academicYear = Short.parseShort(academicYears[studentScheduleSearchData.getSemester().equals(Semester.WINTER) ? 0 : 1]);
 
             List<Schedule> schedules = scheduleRepository.findAll(
-                where(withStatuses(List.of(ScheduleStatus.ACTIVE, ScheduleStatus.INACTIVE))
-                    .and(withAcademicYear(academicYear))
-                    .and(withSemester(studentScheduleSearchData.getSemester()))
-                    .and(withDegree(studentScheduleSearchData.getDegree()))
-                    .and(withSpecialtyId(studentScheduleSearchData.getSpecialtyId()))
-                    .and(withCourseYear(studentScheduleSearchData.getCourseYear()))
-                    .and(withCourseMode(studentScheduleSearchData.getMode()))
-                )
+                    where(withStatuses(List.of(ScheduleStatus.ACTIVE, ScheduleStatus.INACTIVE))
+                            .and(withAcademicYear(academicYear))
+                            .and(withSemester(studentScheduleSearchData.getSemester()))
+                            .and(withDegree(studentScheduleSearchData.getDegree()))
+                            .and(withSpecialtyId(studentScheduleSearchData.getSpecialtyId()))
+                            .and(withCourseYear(studentScheduleSearchData.getCourseYear()))
+                            .and(withCourseMode(studentScheduleSearchData.getMode()))
+                    )
             );
 
             if (schedules.size() > 0) {
@@ -239,17 +296,11 @@ public class ScheduleServiceImpl implements ScheduleService {
                     addNewSchedule(scheduleModel, courseModel);
                 });
 
-                modelAndView.addObject("scheduleCourse", courseModel);
-                modelAndView.addObject("disableEdit", true);
+                return courseModel;
             }
         }
 
-        modelAndView.addObject("faculties", facultyService.getList());
-        modelAndView.addObject("years", academicYearService.getYears());
-        modelAndView.addObject("semesters", Semester.values());
-        modelAndView.addObject("degrees", Degree.values());
-        modelAndView.addObject("courseYears", CourseYear.values());
-        modelAndView.addObject("courseModes", CourseMode.values());
+        return null;
     }
 
     private Schedule findById(Long id) {

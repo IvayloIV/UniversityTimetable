@@ -5,10 +5,15 @@ import bg.tuvarna.universitytimetable.dto.data.ScheduleEditData;
 import bg.tuvarna.universitytimetable.dto.data.StudentScheduleSearchData;
 import bg.tuvarna.universitytimetable.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.util.List;
 
@@ -58,5 +63,18 @@ public class ScheduleController extends BaseController {
     public ModelAndView studentsSchedule(StudentScheduleSearchData studentScheduleSearchData, ModelAndView modelAndView) {
         scheduleService.loadStudentSchedule(studentScheduleSearchData, modelAndView);
         return view("schedule/students", modelAndView);
+    }
+
+    @GetMapping("/download/students")
+    public ResponseEntity<Resource> downloadStudentSchedule(StudentScheduleSearchData studentScheduleSearchData) {
+        return scheduleService.generateStudentSchedule(studentScheduleSearchData);
+    }
+
+    @PostMapping("/notify/students")
+    public ModelAndView notifyStudents(@RequestParam("studentsNameCsv") MultipartFile studentsNameCsv,
+                                       StudentScheduleSearchData studentScheduleSearchData,
+                                       RedirectAttributes redirectAttributes) throws IOException {
+        scheduleService.notifyStudents(studentsNameCsv, studentScheduleSearchData, redirectAttributes);
+        return redirect("/schedule/list/students");
     }
 }

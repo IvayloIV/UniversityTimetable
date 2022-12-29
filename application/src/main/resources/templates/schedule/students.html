@@ -1,4 +1,4 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="studentsSchedule">
+<th:block xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:fragment="studentsSchedule">
     <div class="d-flex justify-content-end pe-5">
         <a th:href="@{/schedule/list/students(lang=bg,academicYear=${param.academicYear},semester=${param.semester},degree=${param.degree},facultyId=${param.facultyId},
             departmentId=${param.departmentId},specialtyId=${param.specialtyId},courseYear=${param.courseYear},mode=${param.mode})}">
@@ -10,7 +10,7 @@
             <img src="/images/unitedKingdomFlag.png" alt="united-kingdom-flag" width="30px"/>
         </a>
     </div>
-    <h1 class="text-center text-dark mt-5" th:text="#{studentSchedule.title}"></h1>
+    <h1 class="text-center text-dark mt-3" th:text="#{studentSchedule.title}"></h1>
     <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50">
     <input type="hidden" id="language" th:value="${#locale}"/>
     <form class="form" th:action="@{/schedule/list/students}" th:method="GET">
@@ -116,13 +116,43 @@
             </div>
             <hr class="hr-2 border-top border-2 mx-auto opacity-75">
         </div>
-        <div class="button-holder d-flex justify-content-center mt-4">
+        <div class="button-holder d-flex justify-content-center mt-4" th:style="${scheduleCourse == null ? 'margin-bottom:9.2rem;' : ''}">
             <button type="submit" class="btn btn-primary" th:text="#{studentSchedule.show}"></button>
         </div>
     </form>
-    <div class="mt-4"
-         th:if="${scheduleCourse != null}"
-         th:include="~{schedule/item}">
+    <div th:if="${scheduleCourse != null}">
+        <div class="mx-auto mt-4"
+             style="width:90%;"
+             th:include="~{schedule/item}">
+        </div>
+        <div class="mx-auto mb-5" style="width:90%;">
+            <div class="pe-4 d-flex justify-content-between mt-3">
+                <div class="d-flex">
+                    <i class="fa-regular fa-envelope h3 align-self-center mb-1 me-2" sec:authorize="hasAuthority('ADMIN')"></i>
+                    <h4 class="mb-1" th:text="#{studentSchedule.sendNotificationTitle}" sec:authorize="hasAuthority('ADMIN')"></h4>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="fw-bold pe-2" th:text="#{studentSchedule.download} + ':'"></div>
+                    <a th:href="@{/schedule/download/students(academicYear=${param.academicYear},semester=${param.semester},degree=${param.degree},facultyId=${param.facultyId},
+                        departmentId=${param.departmentId},specialtyId=${param.specialtyId},courseYear=${param.courseYear},mode=${param.mode})}">
+                        <img src="/images/pdfIcon.png" alt="pdf-icon" width="35px"/>
+                    </a>
+                </div>
+            </div>
+            <hr class="hr-2 mt-0 border-top border-primary border-2 opacity-50" style="width:50.8%" sec:authorize="hasAuthority('ADMIN')">
+            <div class="d-flex" sec:authorize="hasAuthority('ADMIN')">
+                <form class="form row w-75 align-items-center"
+                      th:action="@{/schedule/notify/students(academicYear=${param.academicYear},semester=${param.semester},degree=${param.degree},facultyId=${param.facultyId},
+                    departmentId=${param.departmentId},specialtyId=${param.specialtyId},courseYear=${param.courseYear},mode=${param.mode})}"
+                      th:method="POST"
+                      enctype="multipart/form-data">
+                    <span class="pe-0" style="width:32%;" th:text="#{studentSchedule.excelFileInfo} + ':'"></span>
+                    <input class="form-control me-2" style="width: 26%;" type="file" name="studentsNameCsv"/>
+                    <button class="btn bg-success text-white fw-bold col-2" style="width: 10%;" type="submit" th:text="#{studentSchedule.send}"></button>
+                </form>
+            </div>
+            <hr class="hr-2 mt-3 border-top border-primary border-2 opacity-50" style="width:50.8%" sec:authorize="hasAuthority('ADMIN')"/>
+        </div>
     </div>
     <script th:src="@{/js/specialtyLoader.js}"></script>
 </th:block>
