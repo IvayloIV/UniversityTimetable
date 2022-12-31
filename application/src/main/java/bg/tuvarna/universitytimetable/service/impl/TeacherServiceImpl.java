@@ -3,6 +3,7 @@ package bg.tuvarna.universitytimetable.service.impl;
 import bg.tuvarna.universitytimetable.dto.data.CreateTeacherData;
 import bg.tuvarna.universitytimetable.dto.data.TeacherFreeTimeData;
 import bg.tuvarna.universitytimetable.dto.model.TeacherListModel;
+import bg.tuvarna.universitytimetable.dto.model.TeacherScheduleFilterModel;
 import bg.tuvarna.universitytimetable.entity.Teacher;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.TeacherMapper;
@@ -87,6 +88,25 @@ public class TeacherServiceImpl implements TeacherService {
             .orElseThrow(() -> new ValidationException(resourceBundleUtil.getMessage("teacherList.notFound"), "/"));
         teacher.setArchived(true);
         teacherRepository.save(teacher);
+    }
+
+    @Override
+    public TeacherScheduleFilterModel getFilterModelById(Long id) {
+        Teacher teacher = teacherRepository.findByIdAndArchivedFalse(id) //TODO: After home page is created, check whether model should be returned
+                .orElseThrow(() -> new ValidationException(resourceBundleUtil.getMessage("teacherSchedule.teacherNotFound"), "/"));
+        return teacherMapper.entityToFilterModel(teacher);
+    }
+
+    @Override
+    public List<TeacherScheduleFilterModel> getFilterModels() {
+        List<Teacher> teachers = teacherRepository.findAllByArchivedFalse();
+        return teacherMapper.entityToFilterModel(teachers);
+    }
+
+    @Override
+    public Teacher getById(Long id) {
+        return teacherRepository.findByIdAndArchivedFalse(id) //TODO: After home page is created, check whether model should be returned
+                .orElseThrow(() -> new ValidationException(resourceBundleUtil.getMessage("teacherSchedule.teacherNotFound"), "/"));
     }
 
     private void throwCreateTeacherException(String messageKey, CreateTeacherData createTeacherData) {

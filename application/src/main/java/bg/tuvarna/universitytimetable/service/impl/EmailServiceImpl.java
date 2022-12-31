@@ -41,7 +41,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendScheduleNotifications(String language, List<String> emails, Resource attachment) throws IOException {
         String subject = resourceBundleUtil.getMessage("scheduleMail.subject", language);
-        String html = templateEngine.process("mails/studentSchedule", createContext(language));
+        String html = templateEngine.process("mails/schedule", createContext(language));
         byte[] attachmentBytes = IOUtils.toByteArray(attachment.getInputStream());
         emails.forEach(e -> sendMail(html, e, subject, attachmentBytes));
     }

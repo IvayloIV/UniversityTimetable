@@ -1,0 +1,37 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="teacherItemContent">
+    <div style="font-weight:bold;font-size:18px;"
+         th:text="${@resourceBundleUtil.getMessage(course.subjectType.abbreviation)} + ' ' + ${course.subjectNameBg}">
+    </div>
+    <div style="padding-bottom: 5px;" th:text="${course.roomNumberBg}"></div>
+    <div th:each="teacherCourse,teacherCourseRowStat: ${course.courses}"
+         th:object="${teacherCourse}"
+         th:style="'border-top:1px solid black;padding-top:5px;' + ${teacherCourseRowStat.last ? '' : 'padding-bottom:5px;'}">
+        <div th:text="${@resourceBundleUtil.getMessage(teacherCourse.degree.key)} + ' / ' + *{specialtyNameBg}" style="font-weight:600;"></div>
+        <div style="display:flex;justify-content:center;">
+            <div th:with="mode=${@resourceBundleUtil.getMessage(teacherCourse.mode.key)}"
+                 th:text="*{courseYear} + ' ' + ${@resourceBundleUtil.getMessage('scheduleList.course')} + ' ' + ${#strings.toLowerCase(mode)}"></div>
+            <div th:if="*{groups.size > 0}"
+                 th:style="${pdfView != null ? 'padding-top: 3px;' : ''}">&nbsp;/&nbsp;</div>
+            <div th:each="group,groupRowStat: *{groups}"
+                 th:style="${pdfView != null ? 'padding-top: 3px;' : ''}"
+                 th:text="${group} + ${groupRowStat.last ? '' : ',&nbsp;'}"></div>
+            <div th:if="*{groups.size > 0}" th:text="'&nbsp;' + ${@resourceBundleUtil.getMessage('scheduleList.group')}"></div>
+        </div>
+        <th:block th:with="showWeek=${teacherCourse.week.name != 'ALL' and teacherCourse.week.name != course.week.name}">
+            <div style="font-weight:600;display:flex;justify-content:center;"
+                 th:if="${showWeek or (teacherCourse.startWeek != null and teacherCourse.endWeek != null)}">
+            <span th:if="${showWeek}"
+                  th:with="courseWeek=${@resourceBundleUtil.getMessage(teacherCourse.week.key)}"
+                  th:text="${#strings.toLowerCase(courseWeek)}">
+            </span>
+            <span th:if="${showWeek and teacherCourse.startWeek != null and teacherCourse.endWeek != null}" th:style="${pdfView != null ? 'padding-top: 2px;' : ''}">(</span>
+            <span th:if="${teacherCourse.startWeek != null and teacherCourse.endWeek != null}"
+                  th:style="${pdfView != null ? 'padding-top: 3px;' : ''}"
+                  th:text="${teacherCourse.startWeek} + '-' + ${teacherCourse.endWeek}">
+            </span>
+                <span th:if="${showWeek and teacherCourse.startWeek != null and teacherCourse.endWeek != null}" th:style="${pdfView != null ? 'padding-top: 2px;' : ''}">)</span>&nbsp;
+                <span th:text="${@resourceBundleUtil.getMessage('scheduleList.week')}"></span>
+            </div>
+        </th:block>
+    </div>
+</th:block>

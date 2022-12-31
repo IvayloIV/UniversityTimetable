@@ -24,4 +24,13 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>, JpaSp
             "set s.status = :newStatus " +
             "where s.status = :oldStatus")
     void updateStatus(@Param("oldStatus") ScheduleStatus oldStatus, @Param("newStatus") ScheduleStatus newStatus);
+
+    @Modifying
+    @Query("update Schedule s " +
+            "set s.status = :newStatus " +
+            "where s.status = :oldStatus " +
+            " and s.academicYear.id = :academicYearId")
+    void updateStatusByYearId(@Param("oldStatus") ScheduleStatus oldStatus,
+                              @Param("newStatus") ScheduleStatus newStatus,
+                              @Param("academicYearId") Long academicYearId);
 }

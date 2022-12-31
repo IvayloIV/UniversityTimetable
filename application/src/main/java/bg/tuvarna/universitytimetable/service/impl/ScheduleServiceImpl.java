@@ -2,15 +2,15 @@ package bg.tuvarna.universitytimetable.service.impl;
 
 import bg.tuvarna.universitytimetable.dto.data.ScheduleEditData;
 import bg.tuvarna.universitytimetable.dto.data.StudentScheduleSearchData;
+import bg.tuvarna.universitytimetable.dto.data.TeacherScheduleSearchData;
 import bg.tuvarna.universitytimetable.dto.model.*;
-import bg.tuvarna.universitytimetable.entity.Course;
-import bg.tuvarna.universitytimetable.entity.Faculty;
-import bg.tuvarna.universitytimetable.entity.Schedule;
+import bg.tuvarna.universitytimetable.entity.*;
 import bg.tuvarna.universitytimetable.entity.enums.*;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.ScheduleMapper;
 import bg.tuvarna.universitytimetable.repository.ScheduleRepository;
 import bg.tuvarna.universitytimetable.service.*;
+import bg.tuvarna.universitytimetable.util.DayOfWeekUtil;
 import bg.tuvarna.universitytimetable.util.QueryParamsUtil;
 import bg.tuvarna.universitytimetable.util.ResourceBundleUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +49,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final CsvParserService csvParserService;
     private final EmailService emailService;
     private final QueryParamsUtil queryParamsUtil;
+    private final TeacherService teacherService;
 
     @Autowired
     public ScheduleServiceImpl(ScheduleRepository scheduleRepository,
@@ -59,7 +60,8 @@ public class ScheduleServiceImpl implements ScheduleService {
                                PdfService pdfService,
                                CsvParserService csvParserService,
                                EmailService emailService,
-                               QueryParamsUtil queryParamsUtil) {
+                               QueryParamsUtil queryParamsUtil,
+                               TeacherService teacherService) {
         this.scheduleRepository = scheduleRepository;
         this.resourceBundleUtil = resourceBundleUtil;
         this.scheduleMapper = scheduleMapper;
@@ -69,6 +71,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         this.csvParserService = csvParserService;
         this.emailService = emailService;
         this.queryParamsUtil = queryParamsUtil;
+        this.teacherService = teacherService;
     }
 
     @Override
@@ -126,10 +129,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     public void save() {
         if (scheduleRepository.countByStatus(ScheduleStatus.PENDING) == 0) {
             String message = resourceBundleUtil.getMessage("scheduleList.timetablesNotFound");
-            throw new ValidationException(message, "schedule/generate", Map.of("daysOfWeek", getDaysOfWeek()));
+            throw new ValidationException(message, "schedule/generate", Map.of("daysOfWeek", DayOfWeekUtil.getWorkDays()));
         }
 
-        scheduleRepository.updateStatus(ScheduleStatus.ACTIVE, ScheduleStatus.INACTIVE);
+        AcademicYear lastAcademicYear = academicYearService.getLastAcademicYear();
+        scheduleRepository.updateStatusByYearId(ScheduleStatus.ACTIVE, ScheduleStatus.INACTIVE, lastAcademicYear.getId());
         scheduleRepository.updateStatus(ScheduleStatus.PENDING, ScheduleStatus.ACTIVE);
     }
 
@@ -185,6 +189,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             Course currCourse = s.getCourse();
             Course course = schedule.getCourse();
 
+            //TODO: restrict only on exact start and end time
             if (currCourse.getTeacher().getId().equals(course.getTeacher().getId()) &&
                 (currCourse.getWeek().equals(CourseWeek.ALL) || course.getWeek().equals(CourseWeek.ALL) || currCourse.getWeek().equals(course.getWeek())) &&
                 (!currCourse.getSubject().getId().equals(course.getSubject().getId()) ||
@@ -233,7 +238,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ResponseEntity<Resource> generateStudentSchedule(StudentScheduleSearchData studentScheduleSearchData) {
         CourseScheduleModel courseModel = getCourseScheduleModel(studentScheduleSearchData);
-        Resource resource = pdfService.generateSchedule(courseModel, getDaysOfWeek());
+        Resource resource = pdfService.generateStudentSchedule(courseModel);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=timetable.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
@@ -249,7 +254,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         } else {
             List<String> emails = csvParserService.getEmails(studentsNameCsv);
             CourseScheduleModel courseScheduleModel = getCourseScheduleModel(searchData);
-            Resource resource = pdfService.generateSchedule(courseScheduleModel, getDaysOfWeek());
+            Resource resource = pdfService.generateStudentSchedule(courseScheduleModel);
             emailService.sendScheduleNotifications(courseScheduleModel.getDegree().getLanguage(), emails, resource);
             messageKey = "studentSchedule.sentMails";
         }
@@ -257,19 +262,116 @@ public class ScheduleServiceImpl implements ScheduleService {
         queryParamsUtil.attachQueryParams(attributes, searchData);
     }
 
-    private CourseScheduleModel getCourseScheduleModel(StudentScheduleSearchData studentScheduleSearchData) {
-        boolean fieldsNotEmpty = Arrays.stream(StudentScheduleSearchData.class.getDeclaredFields())
-                .allMatch(s -> {
-                    s.setAccessible(true);
-                    try {
-                        return s.get(studentScheduleSearchData) != null;
-                    } catch (IllegalAccessException e) {
-                        log.error(e.getMessage());
-                        return false;
-                    }
-                });
+    @Override
+    public void loadTeacherSchedule(TeacherScheduleSearchData teacherScheduleSearchData, ModelAndView modelAndView) {
+        if (isFieldsNotEmpty(teacherScheduleSearchData)) {
+            Map<String, List<TeacherScheduleModel>> scheduleMap = getTeacherScheduleModel(teacherScheduleSearchData);
 
-        if (fieldsNotEmpty) {
+            if (scheduleMap.size() == 0) {
+                modelAndView.addObject("message", resourceBundleUtil.getMessage("teacherSchedule.scheduleNotFound"));
+            } else {
+                modelAndView.addObject("academicYear", teacherScheduleSearchData.getAcademicYear());
+                modelAndView.addObject("semester", teacherScheduleSearchData.getSemester());
+                modelAndView.addObject("teacher", teacherService.getFilterModelById(teacherScheduleSearchData.getTeacherId()));
+                modelAndView.addObject("courseWeeks", List.of(CourseWeek.EVEN, CourseWeek.ODD));
+                modelAndView.addObject("schedules", scheduleMap);
+            }
+        }
+
+        modelAndView.addObject("years", academicYearService.getYears());
+        modelAndView.addObject("semesters", Semester.values());
+        modelAndView.addObject("teachers", teacherService.getFilterModels());
+    }
+
+    @Override
+    public ResponseEntity<Resource> generateTeacherSchedule(TeacherScheduleSearchData teacherScheduleSearchData) {
+        Map<String, List<TeacherScheduleModel>> scheduleMap = getTeacherScheduleModel(teacherScheduleSearchData);
+        Resource resource = pdfService.generateTeacherSchedule(teacherScheduleSearchData, scheduleMap);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=timetable.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
+    }
+
+    @Override
+    public void notifyTeacher(TeacherScheduleSearchData teacherScheduleSearchData, RedirectAttributes attributes) throws IOException {
+        Map<String, List<TeacherScheduleModel>> scheduleModel = getTeacherScheduleModel(teacherScheduleSearchData);
+        Resource resource = pdfService.generateTeacherSchedule(teacherScheduleSearchData, scheduleModel);
+        Teacher teacher = teacherService.getById(teacherScheduleSearchData.getTeacherId());
+        emailService.sendScheduleNotifications("bg", List.of(teacher.getUser().getEmail()), resource);
+
+        attributes.addFlashAttribute("message", resourceBundleUtil.getMessage("teacherSchedule.sentMail"));
+        queryParamsUtil.attachQueryParams(attributes, teacherScheduleSearchData);
+    }
+
+    private Map<String, List<TeacherScheduleModel>> getTeacherScheduleModel(TeacherScheduleSearchData teacherScheduleSearchData) {
+        String[] academicYears = teacherScheduleSearchData.getAcademicYear().split("/");
+        Short academicYear = Short.parseShort(academicYears[teacherScheduleSearchData.getSemester().equals(Semester.WINTER) ? 0 : 1]);
+
+        List<Schedule> schedules = scheduleRepository.findAll(
+                where(withStatuses(List.of(ScheduleStatus.ACTIVE))
+                        .and(withAcademicYear(academicYear))
+                        .and(withSemester(teacherScheduleSearchData.getSemester()))
+                        .and(withTeacherId(teacherScheduleSearchData.getTeacherId()))
+                )
+        );
+
+        Map<String, List<TeacherScheduleModel>> scheduleMap = new HashMap<>();
+        for (Schedule schedule : schedules) {
+            List<TeacherScheduleModel> teacherScheduleModels;
+            String startTimeFormatted = schedule.getStartTime().format(DateTimeFormatter.ofPattern("H:m"));
+
+            if (scheduleMap.containsKey(startTimeFormatted)) {
+                teacherScheduleModels = scheduleMap.get(startTimeFormatted);
+            } else {
+                teacherScheduleModels = new ArrayList<>();
+                scheduleMap.put(startTimeFormatted, teacherScheduleModels);
+            }
+
+            Set<TeacherCourseModel> teacherCourseModels = null;
+            TeacherScheduleModel teacherScheduleModel = scheduleMapper.entityToTeacherScheduleModel(schedule);
+            for (TeacherScheduleModel currTeacherScheduleModel : teacherScheduleModels) {
+                if (currTeacherScheduleModel.equals(teacherScheduleModel)) {
+                    if (teacherScheduleModel.getWeek().equals(CourseWeek.ALL)) {
+                        currTeacherScheduleModel.setWeek(CourseWeek.ALL);
+                    }
+                    teacherCourseModels = currTeacherScheduleModel.getCourses();
+                    break;
+                }
+            }
+
+            if (teacherCourseModels == null) {
+                teacherScheduleModels.add(teacherScheduleModel);
+                teacherCourseModels = new HashSet<>();
+                teacherScheduleModel.setCourses(teacherCourseModels);
+            }
+
+            SortedSet<String> groups;
+            TeacherCourseModel teacherCourseModel = scheduleMapper.entityToTeacherCourseModel(schedule);
+            if (!teacherCourseModels.contains(teacherCourseModel)) {
+                teacherCourseModels.add(teacherCourseModel);
+                groups = new TreeSet<>();
+                teacherCourseModel.setGroups(groups);
+            } else {
+                groups = teacherCourseModels.stream()
+                        .filter(c -> c.equals(teacherCourseModel))
+                        .findFirst()
+                        .get()
+                        .getGroups();
+            }
+
+            Group group = schedule.getGroup();
+            if (group != null) {
+                groups.add(group.getName());
+            }
+        }
+
+        return scheduleMap;
+    }
+
+    private CourseScheduleModel getCourseScheduleModel(StudentScheduleSearchData studentScheduleSearchData) {
+        if (isFieldsNotEmpty(studentScheduleSearchData)) {
             String[] academicYears = studentScheduleSearchData.getAcademicYear().split("/");
             Short academicYear = Short.parseShort(academicYears[studentScheduleSearchData.getSemester().equals(Semester.WINTER) ? 0 : 1]);
 
@@ -301,6 +403,20 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         return null;
+    }
+
+    private static boolean isFieldsNotEmpty(Object object) {
+        boolean fieldsNotEmpty = Arrays.stream(object.getClass().getDeclaredFields())
+                .allMatch(s -> {
+                    s.setAccessible(true);
+                    try {
+                        return s.get(object) != null;
+                    } catch (IllegalAccessException e) {
+                        log.error(e.getMessage());
+                        return false;
+                    }
+                });
+        return fieldsNotEmpty;
     }
 
     private Schedule findById(Long id) {
@@ -341,12 +457,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleMapper.updateScheduleModel(scheduleEditData, scheduleEditModel);
 
         throw new ValidationException(message, "schedule/edit",
-                Map.of("daysOfWeek", getDaysOfWeek(),
+                Map.of("daysOfWeek", DayOfWeekUtil.getWorkDays(),
                         "schedule", scheduleEditModel));
-    }
-
-    private List<DayOfWeek> getDaysOfWeek() {
-        return List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
-                DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
     }
 }

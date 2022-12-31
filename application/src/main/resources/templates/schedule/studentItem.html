@@ -1,4 +1,4 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="schedule">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="studentItem">
     <div th:style="${pdfView != null ? 'margin-top:9rem;' : ''}">
         <table style="border-collapse:collapse;width:100%;" th:object="${scheduleCourse}">
             <tbody th:with="language=*{degree.language}">
@@ -55,9 +55,9 @@
                                             <a th:href="@{/schedule/edit/{scheduleId}(scheduleId=${course.id})}"
                                                style="text-decoration:none;color:black;"
                                                th:unless="${disableEdit}">
-                                                <th:block th:include="~{schedule/itemContent}"></th:block>
+                                                <th:block th:include="~{schedule/studentItemContent}"></th:block>
                                             </a>
-                                            <th:block th:if="${disableEdit}" th:include="~{schedule/itemContent}"></th:block>
+                                            <th:block th:if="${disableEdit}" th:include="~{schedule/studentItemContent}"></th:block>
                                     </td>
                                     <th:block th:if="${course.day == dayOfWeek and course.group == null and groupRowStat.index > 0}"
                                               th:with="counter=${@counterUtil.setNum(colSpan)}">

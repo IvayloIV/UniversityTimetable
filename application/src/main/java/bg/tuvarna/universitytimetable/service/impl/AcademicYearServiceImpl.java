@@ -1,5 +1,6 @@
 package bg.tuvarna.universitytimetable.service.impl;
 
+import bg.tuvarna.universitytimetable.entity.AcademicYear;
 import bg.tuvarna.universitytimetable.entity.enums.Semester;
 import bg.tuvarna.universitytimetable.repository.AcademicYearRepository;
 import bg.tuvarna.universitytimetable.service.AcademicYearService;
@@ -28,5 +29,10 @@ public class AcademicYearServiceImpl implements AcademicYearService {
                     String.format("%s/%s", y.getYear(), y.getYear() + 1) :
                     String.format("%s/%s", y.getYear() - 1, y.getYear()))
             .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    @Override
+    public AcademicYear getLastAcademicYear() {
+        return academicYearRepository.findFirstByOrderByYearDescSemesterDesc();
     }
 }

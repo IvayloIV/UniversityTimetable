@@ -90,4 +90,12 @@ public class ScheduleSpecification {
             return (schedule, cq, cb) -> cb.equal(schedule.get("course").get("mode"), mode);
         }
     }
+
+    public static Specification<Schedule> withTeacherId(Long teacherId) {
+        if (ObjectUtils.isEmpty(teacherId)) {
+            return null;
+        } else {
+            return (schedule, cq, cb) -> cb.equal(schedule.get("course").get("teacher").get("id"), teacherId);
+        }
+    }
 }

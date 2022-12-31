@@ -1,4 +1,4 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="scheduleItem">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="scheduleItemContent">
     <div style="font-weight:bold;"
          th:text="${@resourceBundleUtil.getMessage(course.subjectType.abbreviation,language)} + ' ' + ${language == 'bg' ? course.subjectNameBg : course.subjectNameEn}">
     </div>

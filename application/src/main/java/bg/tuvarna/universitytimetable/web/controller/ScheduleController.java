@@ -3,7 +3,9 @@ package bg.tuvarna.universitytimetable.web.controller;
 
 import bg.tuvarna.universitytimetable.dto.data.ScheduleEditData;
 import bg.tuvarna.universitytimetable.dto.data.StudentScheduleSearchData;
+import bg.tuvarna.universitytimetable.dto.data.TeacherScheduleSearchData;
 import bg.tuvarna.universitytimetable.service.ScheduleService;
+import bg.tuvarna.universitytimetable.util.DayOfWeekUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +32,7 @@ public class ScheduleController extends BaseController {
 
     @ModelAttribute("daysOfWeek")
     public List<DayOfWeek> daysOfWeek() {
-        return List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
-                DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
+        return DayOfWeekUtil.getWorkDays();
     }
 
     @GetMapping("/generate")
@@ -76,5 +77,23 @@ public class ScheduleController extends BaseController {
                                        RedirectAttributes redirectAttributes) throws IOException {
         scheduleService.notifyStudents(studentsNameCsv, studentScheduleSearchData, redirectAttributes);
         return redirect("/schedule/list/students");
+    }
+
+    @GetMapping("/list/teachers")
+    public ModelAndView teachersSchedule(TeacherScheduleSearchData teacherScheduleSearchData, ModelAndView modelAndView) {
+        scheduleService.loadTeacherSchedule(teacherScheduleSearchData, modelAndView);
+        return view("schedule/teachers", modelAndView);
+    }
+
+    @GetMapping("/download/teachers")
+    public ResponseEntity<Resource> downloadTeacherSchedule(TeacherScheduleSearchData teacherScheduleSearchData) {
+        return scheduleService.generateTeacherSchedule(teacherScheduleSearchData);
+    }
+
+    @PostMapping("/notify/teacher")
+    public ModelAndView notifyTeacher(TeacherScheduleSearchData teacherScheduleSearchData,
+                                       RedirectAttributes redirectAttributes) throws IOException {
+        scheduleService.notifyTeacher(teacherScheduleSearchData, redirectAttributes);
+        return redirect("/schedule/list/teachers");
     }
 }

@@ -18,7 +18,7 @@
             <h2 class="text-center mt-3" th:text="${faculty.nameBg}"></h2>
             <hr class="hr-2 w-25 border-top border-primary border-2 mx-auto opacity-50 mt-0">
             <div th:each="scheduleCourse,scheduleCourseRowStat: ${faculty.courses}" style="width:90%" class="mx-auto">
-                <div th:class="${scheduleCourseRowStat.last and !facultyRowStat.last ? 'mb-4' : 'mb-5'}" th:include="~{schedule/item}"></div>
+                <div th:class="${scheduleCourseRowStat.last and !facultyRowStat.last ? 'mb-4' : 'mb-5'}" th:include="~{schedule/studentItem}"></div>
             </div>
         </th:block>
         <div th:if="${faculties.size == 0}"

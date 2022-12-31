@@ -1,9 +1,7 @@
 package bg.tuvarna.universitytimetable.mapper;
 
 import bg.tuvarna.universitytimetable.dto.data.ScheduleEditData;
-import bg.tuvarna.universitytimetable.dto.model.CourseScheduleModel;
-import bg.tuvarna.universitytimetable.dto.model.ScheduleDetailsModel;
-import bg.tuvarna.universitytimetable.dto.model.ScheduleEditModel;
+import bg.tuvarna.universitytimetable.dto.model.*;
 import bg.tuvarna.universitytimetable.entity.AcademicYear;
 import bg.tuvarna.universitytimetable.entity.Schedule;
 import bg.tuvarna.universitytimetable.entity.enums.Semester;
@@ -73,6 +71,28 @@ public interface ScheduleMapper {
     void updateSchedule(ScheduleEditData scheduleEditData, @MappingTarget Schedule schedule);
 
     void updateScheduleModel(ScheduleEditData scheduleEditData, @MappingTarget ScheduleEditModel scheduleEditModel);
+
+    @Mappings({
+        @Mapping(target = "day", source = "schedule.day"),
+        @Mapping(target = "startTime", source = "schedule.startTime"),
+        @Mapping(target = "endTime", source = "schedule.endTime"),
+        @Mapping(target = "subjectType", source = "schedule.course.subject.type"),
+        @Mapping(target = "subjectNameBg", source = "schedule.course.subject.nameBg"),
+        @Mapping(target = "roomNumberBg", source = "schedule.course.room.numberBg"),
+        @Mapping(target = "week", source = "schedule.course.week")
+    })
+    TeacherScheduleModel entityToTeacherScheduleModel(Schedule schedule);
+
+    @Mappings({
+        @Mapping(target = "degree", source = "schedule.course.degree"),
+        @Mapping(target = "specialtyNameBg", source = "schedule.course.specialty.nameBg"),
+        @Mapping(target = "courseYear", source = "schedule.course.year"),
+        @Mapping(target = "mode", source = "schedule.course.mode"),
+        @Mapping(target = "week", source = "schedule.course.week"),
+        @Mapping(target = "startWeek", source = "schedule.course.startWeek"),
+        @Mapping(target = "endWeek", source = "schedule.course.endWeek")
+    })
+    TeacherCourseModel entityToTeacherCourseModel(Schedule schedule);
 
     @AfterMapping
     default void updateAcademicYear(Schedule schedule, @MappingTarget CourseScheduleModel scheduleModel) {

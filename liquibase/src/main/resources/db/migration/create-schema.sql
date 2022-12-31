@@ -47,7 +47,7 @@ CREATE TABLE teacher_free_time (
 );
 
 ALTER TABLE teacher_free_time ADD CONSTRAINT end_time_check CHECK (end_time > start_time);
-ALTER TABLE teacher_free_time ADD CONSTRAINT day_check CHECK (day in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'));
+ALTER TABLE teacher_free_time ADD CONSTRAINT day_check CHECK (day in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'));
 
 CREATE TABLE faculty (
     id BIGSERIAL PRIMARY KEY,
@@ -146,7 +146,7 @@ CREATE TABLE course_time (
 );
 
 ALTER TABLE course_time ADD CONSTRAINT end_time_check CHECK (end_time > start_time);
-ALTER TABLE course_time ADD CONSTRAINT day_check CHECK (day in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'));
+ALTER TABLE course_time ADD CONSTRAINT day_check CHECK (day in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'));
 
 CREATE TABLE university_group (
     id BIGSERIAL PRIMARY KEY,
@@ -190,5 +190,5 @@ CREATE TABLE schedule (
 
 ALTER TABLE schedule ADD CONSTRAINT end_time_check CHECK (end_time > start_time);
 ALTER TABLE schedule ADD CONSTRAINT hex_color_length_check CHECK (length(hex_color) > 3);
-ALTER TABLE schedule ADD CONSTRAINT day_check CHECK (day in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'));
+ALTER TABLE schedule ADD CONSTRAINT day_check CHECK (day in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'));
 ALTER TABLE schedule ADD CONSTRAINT status_check CHECK (status in ('PENDING', 'ACTIVE', 'INACTIVE'));

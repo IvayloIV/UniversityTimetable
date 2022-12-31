@@ -1,0 +1,80 @@
+<th:block xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:fragment="studentsSchedule">
+    <h1 class="text-center text-dark" th:text="#{teacherSchedule.title}" style="margin-top:4.5rem;"></h1>
+    <hr class="hr-2 w-50 border-top border-primary border-2 mx-auto opacity-50">
+    <form class="form" th:action="@{/schedule/list/teachers}" th:method="GET">
+        <div class="w-50 mx-auto mt-4">
+            <div class="row my-3 align-items-center">
+                <div class="col fw-bold">
+                    <span th:text="#{teacherSchedule.academicYear} + ':'"></span>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" name="academicYear">
+                        <option th:each="year : ${years}"
+                                th:value="${year}"
+                                th:text="${year}"
+                                th:selected="${#strings.equals(param.academicYear, year)}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col fw-bold">
+                    <span th:text="#{teacherSchedule.semester} + ':'"></span>
+                </div>
+                <div class="col-4">
+                    <select class="form-select" name="semester">
+                        <option th:each="semester : ${semesters}"
+                                th:value="${semester}"
+                                th:text="${@resourceBundleUtil.getMessage(semester.key)}"
+                                th:selected="${#strings.equals(param.semester, semester)}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <hr class="hr-2 border-top border-2 mx-auto opacity-25">
+            <div class="row my-3 align-items-center">
+                <div class="col-2 fw-bold">
+                    <span th:text="#{teacherSchedule.teacher} + ':'"></span>
+                </div>
+                <div class="col">
+                    <select class="form-select" name="teacherId">
+                        <option th:each="teacher : ${teachers}"
+                                th:value="${teacher.id}"
+                                th:text="${teacher.academicRank + ' ' + teacher.firstName + ' ' + teacher.lastName}"
+                                th:selected="${#strings.equals(param.teacherId, teacher.id)}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <hr class="hr-2 border-top border-2 mx-auto opacity-25">
+        </div>
+        <div class="button-holder d-flex justify-content-center mt-4" th:style="${schedules == null ? 'margin-bottom:17.6rem;' : ''}">
+            <button type="submit" class="btn btn-primary" th:text="#{teacherSchedule.show}"></button>
+        </div>
+    </form>
+    <div th:if="${schedules != null}">
+        <div class="mx-auto mt-4"
+             style="width:90%;"
+             th:include="~{schedule/teacherItem}">
+        </div>
+        <div class="mx-auto d-flex justify-content-between mt-3 mb-5" style="width:90%;">
+            <div>
+                <div class="d-flex align-items-center" sec:authorize="hasAuthority('ADMIN')">
+                    <i class="fa-regular fa-envelope h3 align-self-center my-0 me-2"></i>
+                    <h4 class="mb-0" th:text="#{teacherSchedule.sendNotificationTitle} + ' - '"></h4>
+                    <form class="form"
+                          th:action="@{/schedule/notify/teacher(academicYear=${param.academicYear},semester=${param.semester},teacherId=${param.teacherId})}"
+                          th:method="POST">
+                        <button class="btn bg-success text-white fw-bold ms-2" type="submit" th:text="#{teacherSchedule.send}"></button>
+                    </form>
+                </div>
+                <hr class="hr-2 mb-0 mt-2 border-top border-primary border-2 opacity-50" sec:authorize="hasAuthority('ADMIN')">
+            </div>
+            <div class="d-flex align-items-center pb-3">
+                <div class="fw-bold pe-2" th:text="#{teacherSchedule.download} + ':'"></div>
+                <a th:href="@{/schedule/download/teachers(academicYear=${param.academicYear},semester=${param.semester},teacherId=${param.teacherId})}">
+                    <img src="/images/pdfIcon.png" alt="pdf-icon" width="35px"/>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/specialtyLoader.js}"></script>
+</th:block>

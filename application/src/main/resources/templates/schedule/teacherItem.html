@@ -1,0 +1,66 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="teacherItem">
+    <div>
+        <table style="border-collapse:collapse;width:100%;">
+            <tbody>
+                <tr style="text-align:center;font-weight:bold;">
+                    <td rowspan="3" style="border:2px solid black;"></td>
+                    <td colspan="8" th:text="${academicYear}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <th:block th:with="semester=${@resourceBundleUtil.getMessage(semester.key)}">
+                        <td colspan="8" th:text="${#strings.toUpperCase(semester)}" style="padding:8px 2px;border:2px solid black;"></td>
+                    </th:block>
+                    <td rowspan="2" colspan="24" th:text="${@resourceBundleUtil.getMessage('scheduleList.itemTitle')}" style="padding:8px 2px;border:2px solid black;vertical-align:middle;"></td>
+                    <td colspan="16" th:text="${teacher.academicRank + ' ' + teacher.firstName + ' ' + teacher.lastName}" style="padding:8px 2px;border:2px solid black;"></td>
+                </tr>
+                <tr style="text-align:center;">
+                    <td colspan="8" th:text="${@resourceBundleUtil.getMessage('scheduleList.schoolYear')}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <td colspan="8" th:text="${@resourceBundleUtil.getMessage('scheduleList.semester')}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <td colspan="16" th:text="${@resourceBundleUtil.getMessage('scheduleList.teacher')}" style="padding:8px 2px;border:2px solid black;"></td>
+                </tr>
+                <tr style="text-align:center;vertical-align:middle;">
+                    <td colspan="4" th:text="${@resourceBundleUtil.getMessage('scheduleList.dayTime')}" style="padding:8px 2px;border:2px solid black;"></td>
+                    <td colspan="4"
+                        style="padding:8px 0px;border:2px solid black;"
+                        th:each="h : ${#numbers.sequence(7,19)}">
+                            <th:block th:text="${h}"></th:block><sup>15</sup>
+                            -
+                            <th:block th:text="${h + 1}"></th:block><sup>00</sup>
+                    </td>
+                </tr>
+                <th:block th:each="dayOfWeek,dayOfWeekRowStat: ${daysOfWeek}">
+                    <tr th:each="courseWeek,courseWeekRowStat: *{courseWeeks}" style="text-align:center;">
+                        <td th:text="${@resourceBundleUtil.getMessage(courseWeek.key)}"
+                            th:style="'transform:rotate(270deg);vertical-align:middle;padding:2rem 0rem;border-left:2px solid black;border-right:2px solid black;border-top:0px;' + ${courseWeekRowStat.last ? 'border-bottom: 2px solid black;' : 'border-bottom: 1px solid black;'}">
+                        </td>
+                        <td colspan="4"
+                            th:rowspan="2"
+                            style="transform:rotate(270deg);vertical-align:middle;padding:3rem 0rem;border:2px solid black;"
+                            th:if="${courseWeekRowStat.index == 0}"
+                            th:text="${@dayOfWeekUtil.getDay(dayOfWeek, 'bg')}"></td>
+                        <th:block th:each="h,hourRowStat : ${#numbers.sequence(7,19)}">
+                            <th:block th:each="m,minuteRowStat : ${#numbers.sequence(15,60,15)}"
+                                      th:with="time=${h + m / 60} + ':' + ${m % 60}">
+                                <th:block th:each="course: ${schedules.get(time)}"
+                                          th:with="colSpan=${((course.getEndTime().getHour() * 60 + course.getEndTime().getMinute()) - ((h + m / 60) * 60 + (m % 60))) / 15}">
+                                    <td th:if="${course.day == dayOfWeek and ((#strings.equals(course.week, 'ALL') and courseWeekRowStat.index == 0) or #strings.equals(courseWeek, course.week))}"
+                                        th:colspan="${colSpan}"
+                                        th:rowspan="${#strings.equals(course.week, 'ALL') and courseWeekRowStat.index == 0} ? 2 : 1"
+                                        th:style="'vertical-align:middle;border:2px solid black;padding:0.25rem;background-color:' + ${course.hexColor}"
+                                        th:with="counter=${@counterUtil.setNum(colSpan)}">
+                                            <th:block th:include="~{schedule/teacherItemContent}"></th:block>
+                                    </td>
+                                    <th:block th:if="${course.day == dayOfWeek and #strings.equals(course.week, 'ALL') and courseWeekRowStat.index > 0}"
+                                              th:with="counter=${@counterUtil.setNum(colSpan)}">
+                                    </th:block>
+                                </th:block>
+                                <td th:unless="${@counterUtil.getAndDecrement() > 0}"
+                                    th:style="'padding:0.25rem;border-left:0px;' + ${m % 60 == 0 ? 'border-right:2px solid black;' : 'border-right:1px dotted black;'}
+                                        + ${courseWeekRowStat.last ? 'border-bottom: 2px solid black;' : 'border-bottom: 1px solid black;'}">
+                                </td>
+                            </th:block>
+                        </th:block>
+                    </tr>
+                </th:block>
+            </tbody>
+        </table>
+    </div>
+</th:block>

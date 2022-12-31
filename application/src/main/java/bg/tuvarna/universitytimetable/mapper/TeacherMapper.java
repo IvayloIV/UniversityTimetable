@@ -3,6 +3,7 @@ package bg.tuvarna.universitytimetable.mapper;
 import bg.tuvarna.universitytimetable.dto.data.CreateTeacherData;
 import bg.tuvarna.universitytimetable.dto.data.TeacherFreeTimeData;
 import bg.tuvarna.universitytimetable.dto.model.TeacherListModel;
+import bg.tuvarna.universitytimetable.dto.model.TeacherScheduleFilterModel;
 import bg.tuvarna.universitytimetable.entity.Teacher;
 import bg.tuvarna.universitytimetable.entity.TeacherFreeTime;
 import bg.tuvarna.universitytimetable.entity.enums.Role;
@@ -46,4 +47,13 @@ public abstract class TeacherMapper {
         @Mapping(source = "teacher.user.passwordUpdatedDate", target = "passwordUpdate"),
     })
     public abstract TeacherListModel entityToModel(Teacher teacher);
+
+    @Mappings({
+            @Mapping(source = "academicRankBg", target = "academicRank"),
+            @Mapping(source = "firstNameBg", target = "firstName"),
+            @Mapping(source = "lastNameBg", target = "lastName")
+    })
+    public abstract TeacherScheduleFilterModel entityToFilterModel(Teacher teacher);
+
+    public abstract List<TeacherScheduleFilterModel> entityToFilterModel(List<Teacher> teacher);
 }
