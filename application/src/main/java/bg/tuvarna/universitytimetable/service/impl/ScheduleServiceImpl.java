@@ -6,6 +6,7 @@ import bg.tuvarna.universitytimetable.dto.data.TeacherScheduleSearchData;
 import bg.tuvarna.universitytimetable.dto.model.*;
 import bg.tuvarna.universitytimetable.entity.*;
 import bg.tuvarna.universitytimetable.entity.enums.*;
+import bg.tuvarna.universitytimetable.exception.EntityNotFoundException;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.ScheduleMapper;
 import bg.tuvarna.universitytimetable.repository.ScheduleRepository;
@@ -189,11 +190,12 @@ public class ScheduleServiceImpl implements ScheduleService {
             Course currCourse = s.getCourse();
             Course course = schedule.getCourse();
 
-            //TODO: restrict only on exact start and end time
             if (currCourse.getTeacher().getId().equals(course.getTeacher().getId()) &&
                 (currCourse.getWeek().equals(CourseWeek.ALL) || course.getWeek().equals(CourseWeek.ALL) || currCourse.getWeek().equals(course.getWeek())) &&
                 (!currCourse.getSubject().getId().equals(course.getSubject().getId()) ||
-                 !currCourse.getRoom().getId().equals(course.getRoom().getId()))) {
+                 !currCourse.getRoom().getId().equals(course.getRoom().getId()) ||
+                 !s.getStartTime().equals(scheduleEditData.getStartTime()) ||
+                 !s.getEndTime().equals(scheduleEditData.getEndTime()))) {
                 throwEditScheduleException("scheduleEdit.busyTeacherValidation", schedule, scheduleEditData);
             }
 
@@ -420,8 +422,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     private Schedule findById(Long id) {
-        return scheduleRepository.findById(id) //TODO: check if home page need some addition models
-            .orElseThrow(() -> new ValidationException(resourceBundleUtil.getMessage("scheduleEdit.notFound"), "/"));
+        return scheduleRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(resourceBundleUtil.getMessage("scheduleEdit.notFound")));
     }
 
     private void addNewSchedule(ScheduleDetailsModel scheduleModel, CourseScheduleModel courseModel) {

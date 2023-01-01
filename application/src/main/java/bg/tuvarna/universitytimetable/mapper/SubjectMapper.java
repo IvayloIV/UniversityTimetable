@@ -9,6 +9,7 @@ import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring",
         uses = {CourseMapper.class},
@@ -21,7 +22,7 @@ public interface SubjectMapper {
     })
     Subject modelToEntity(CreateSubjectData createSubjectData);
 
-    List<SubjectListModel> entityToModel(List<Subject> subjects);
+    List<SubjectListModel> entityToModel(Set<Subject> subjects);
 
     @Mapping(target = "name", source = "subject.nameBg")
     SubjectListModel entityToModel(Subject subject);

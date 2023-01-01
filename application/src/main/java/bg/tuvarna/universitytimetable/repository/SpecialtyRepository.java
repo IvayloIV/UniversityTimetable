@@ -19,4 +19,6 @@ public interface SpecialtyRepository extends JpaRepository<Specialty, Long> {
     List<Specialty> findByDepartmentId(@Param("departmentId") Long departmentId);
 
     Optional<Specialty> findByIdAndArchivedFalse(Long id);
+
+    boolean existsByNameBgAndArchivedFalse(String nameBg);
 }

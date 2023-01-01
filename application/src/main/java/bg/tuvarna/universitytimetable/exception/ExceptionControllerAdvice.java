@@ -3,6 +3,7 @@ package bg.tuvarna.universitytimetable.exception;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -22,5 +23,11 @@ public class ExceptionControllerAdvice {
         }
 
         return modelAndView;
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public String handleEntityNotFoundException(EntityNotFoundException ex, RedirectAttributes attributes) {
+        attributes.addFlashAttribute("message", ex.getMessage());
+        return "redirect:/schedule/list/students";
     }
 }

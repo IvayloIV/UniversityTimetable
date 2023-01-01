@@ -5,6 +5,7 @@ import bg.tuvarna.universitytimetable.dto.model.FacultyListModel;
 import bg.tuvarna.universitytimetable.dto.model.SpecialtyListModel;
 import bg.tuvarna.universitytimetable.entity.Department;
 import bg.tuvarna.universitytimetable.entity.Specialty;
+import bg.tuvarna.universitytimetable.exception.EntityNotFoundException;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.SpecialtyMapper;
 import bg.tuvarna.universitytimetable.repository.DepartmentRepository;
@@ -61,12 +62,12 @@ public class SpecialtyServiceImpl implements SpecialtyService {
             return false;
         }
 
+        if (specialtyRepository.existsByNameBgAndArchivedFalse(createSpecialtyData.getNameBg())) {
+            throw throwValidationException("createSpecialty.alreadyExists", createSpecialtyData);
+        }
+
         Department department = departmentRepository.findById(createSpecialtyData.getDepartmentId())
-            .orElseThrow(() -> {
-                String message = resourceBundleUtil.getMessage("createSpecialty.departmentNotFound");
-                List<FacultyListModel> facultyList = facultyService.getList();
-                throw new ValidationException(message, "specialty/create", Map.of("facultyList", facultyList));
-            });
+            .orElseThrow(() -> throwValidationException("createSpecialty.departmentNotFound", createSpecialtyData));
 
         Specialty specialty = specialtyMapper.modelToEntity(createSpecialtyData);
         specialty.setDepartment(department);
@@ -76,9 +77,17 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 
     @Override
     public void delete(Long id) {
-        Specialty specialty = specialtyRepository.findById(id) //TODO: After home page is created, check whether model should be returned
-                .orElseThrow(() -> new ValidationException(resourceBundleUtil.getMessage("createSpecialty.notFound"), "/"));
+        Specialty specialty = specialtyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(resourceBundleUtil.getMessage("createSpecialty.notFound")));
         specialty.setArchived(true);
         specialtyRepository.save(specialty);
+    }
+
+    private ValidationException throwValidationException(String messageKey, CreateSpecialtyData createSpecialtyData) {
+        String message = resourceBundleUtil.getMessage(messageKey);
+        List<FacultyListModel> facultyList = facultyService.getList();
+        return new ValidationException(message, "specialty/create",
+                Map.of("facultyList", facultyList,
+                        "createSpecialtyData", createSpecialtyData));
     }
 }

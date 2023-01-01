@@ -21,8 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static bg.tuvarna.universitytimetable.repository.specification.SubjectSpecification.*;
@@ -146,7 +145,7 @@ public class SubjectServiceImpl implements SubjectService {
                 pageable
         );
 
-        List<Subject> subjects = subjectsPage.getContent();
+        Set<Subject> subjects = new LinkedHashSet<>(subjectsPage.getContent());
         subjects.forEach(s -> s.setCourses(courseService.getCoursesBySubjectId(s.getId())));
 
         return SubjectPaginatedModel.builder()

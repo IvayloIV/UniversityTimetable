@@ -5,6 +5,7 @@ import bg.tuvarna.universitytimetable.dto.data.TeacherFreeTimeData;
 import bg.tuvarna.universitytimetable.dto.model.TeacherListModel;
 import bg.tuvarna.universitytimetable.dto.model.TeacherScheduleFilterModel;
 import bg.tuvarna.universitytimetable.entity.Teacher;
+import bg.tuvarna.universitytimetable.exception.EntityNotFoundException;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.TeacherMapper;
 import bg.tuvarna.universitytimetable.repository.TeacherRepository;
@@ -84,16 +85,16 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void delete(Long teacherId) {
-        Teacher teacher = teacherRepository.findById(teacherId) //TODO: After home page is created, check whether model should be returned
-            .orElseThrow(() -> new ValidationException(resourceBundleUtil.getMessage("teacherList.notFound"), "/"));
+        Teacher teacher = teacherRepository.findById(teacherId)
+            .orElseThrow(() -> new EntityNotFoundException(resourceBundleUtil.getMessage("teacherList.notFound")));
         teacher.setArchived(true);
         teacherRepository.save(teacher);
     }
 
     @Override
     public TeacherScheduleFilterModel getFilterModelById(Long id) {
-        Teacher teacher = teacherRepository.findByIdAndArchivedFalse(id) //TODO: After home page is created, check whether model should be returned
-                .orElseThrow(() -> new ValidationException(resourceBundleUtil.getMessage("teacherSchedule.teacherNotFound"), "/"));
+        Teacher teacher = teacherRepository.findByIdAndArchivedFalse(id)
+                .orElseThrow(() -> new EntityNotFoundException(resourceBundleUtil.getMessage("teacherSchedule.teacherNotFound")));
         return teacherMapper.entityToFilterModel(teacher);
     }
 
@@ -105,8 +106,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher getById(Long id) {
-        return teacherRepository.findByIdAndArchivedFalse(id) //TODO: After home page is created, check whether model should be returned
-                .orElseThrow(() -> new ValidationException(resourceBundleUtil.getMessage("teacherSchedule.teacherNotFound"), "/"));
+        return teacherRepository.findByIdAndArchivedFalse(id)
+                .orElseThrow(() -> new EntityNotFoundException(resourceBundleUtil.getMessage("teacherSchedule.teacherNotFound")));
     }
 
     private void throwCreateTeacherException(String messageKey, CreateTeacherData createTeacherData) {
