@@ -157,8 +157,8 @@ CREATE TABLE university_group (
 ALTER TABLE university_group ADD CONSTRAINT name_length_check CHECK (length(name) >= 1);
 
 CREATE TABLE course_group (
-    course_id BIGSERIAL,
-    group_id BIGSERIAL,
+    course_id BIGINT,
+    group_id BIGINT,
     PRIMARY KEY (course_id, group_id),
     FOREIGN KEY (course_id) REFERENCES course (id),
     FOREIGN KEY (group_id) REFERENCES university_group (id)
