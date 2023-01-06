@@ -18,16 +18,18 @@ public interface ScheduleService {
 
     List<FacultyScheduleModel> findAll();
 
+    void generateSchedules();
+
     void save();
 
     ScheduleEditModel getEditModel(Long id);
 
     void edit(Long id, ScheduleEditData scheduleEditData);
-
     void loadStudentSchedule(StudentScheduleSearchData studentScheduleSearchData, ModelAndView modelAndView);
-    ResponseEntity<Resource> generateStudentSchedule(StudentScheduleSearchData studentScheduleSearchData);
 
+    ResponseEntity<Resource> generateStudentSchedule(StudentScheduleSearchData studentScheduleSearchData);
     void notifyStudents(MultipartFile studentsNameCsv, StudentScheduleSearchData searchData, RedirectAttributes attributes) throws IOException;
+
     void loadTeacherSchedule(TeacherScheduleSearchData teacherScheduleSearchData, ModelAndView modelAndView);
 
     ResponseEntity<Resource> generateTeacherSchedule(TeacherScheduleSearchData teacherScheduleSearchData);

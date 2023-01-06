@@ -41,6 +41,12 @@ public class ScheduleController extends BaseController {
         return view("schedule/list", modelAndView);
     }
 
+    @PostMapping("/generate")
+    public ModelAndView generatedSchedules() {
+        scheduleService.generateSchedules();
+        return redirect("/schedule/generate");
+    }
+
     @PostMapping("/save")
     public ModelAndView saveSchedules() {
         scheduleService.save();

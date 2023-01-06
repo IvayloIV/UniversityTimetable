@@ -126,6 +126,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    public void generateSchedules() {
+        //TODO
+    }
+
+    @Override
     @Transactional
     public void save() {
         if (scheduleRepository.countByStatus(ScheduleStatus.PENDING) == 0) {
