@@ -72,7 +72,7 @@ VALUES ('УИС', 'UIS', 'LECTURE', true, false, '2023-11-24 13:00'),
        ('ВК', 'VK', 'COURSEWORK', true, false, '2023-11-24 13:00'),
        ('КА', 'KA', 'LECTURE', true, false, '2023-11-24 13:00');
 
-INSERT INTO course (degree, specialty_id, year, mode, week, start_week, end_week, hours_per_week, meetings_per_week, teacher_id, room_id, subject_id, active, archived)
+INSERT INTO course (degree, specialty_id, class_year, mode, week, start_week, end_week, hours_per_week, meetings_per_week, teacher_id, room_id, subject_id, active, archived)
 VALUES ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'EVEN', null, null, 4, 2, 1, 1, 3, true, false),
        ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ODD', 1, 10, 4, 2, 1, 2, 1, true, false),
        ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 4, 2, 1, 3, 2, true, false),
@@ -104,11 +104,11 @@ VALUES (1, 1),
        (10, 1),
        (11, 2);
 
-INSERT INTO academic_year (year, semester)
+INSERT INTO academic_year (study_year, semester)
 VALUES (2022, 'WINTER'),
        (2023, 'SUMMER');
 
-INSERT INTO schedule (day, start_time, end_time, hex_color, status, course_id, group_id, academic_year_id)
+INSERT INTO schedule (workday, start_time, end_time, hex_color, status, course_id, group_id, academic_year_id)
 VALUES ('MONDAY', '08:45', '11:00', '#6E9EF7', 'PENDING', 1, 1, 1),
        ('WEDNESDAY', '17:15', '19:15', '#D884F7', 'PENDING', 8, null, 1),
        ('MONDAY', '13:45', '15:00', '#C496F1', 'PENDING', 2, 1, 1),

@@ -18,7 +18,7 @@ public class TeacherFreeTime {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "day", nullable = false)
+    @Column(name = "workday", nullable = false)
     private DayOfWeek day;
 
     @Column(name = "start_time", nullable = false)

@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "academic_year",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"year", "semester"})
+            @UniqueConstraint(columnNames = {"study_year", "semester"})
         }
 )
 public class AcademicYear {
@@ -20,7 +20,7 @@ public class AcademicYear {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "year", nullable = false)
+    @Column(name = "study_year", nullable = false)
     private Short year;
 
     @Enumerated(EnumType.STRING)

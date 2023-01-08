@@ -39,7 +39,7 @@ ALTER TABLE teacher ADD CONSTRAINT ucn_length_check CHECK (length(ucn) = 10);
 
 CREATE TABLE teacher_free_time (
     id BIGSERIAL PRIMARY KEY,
-    day VARCHAR(15) NOT NULL,
+    workday VARCHAR(15) NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     teacher_id BIGINT NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE teacher_free_time (
 );
 
 ALTER TABLE teacher_free_time ADD CONSTRAINT end_time_check CHECK (end_time > start_time);
-ALTER TABLE teacher_free_time ADD CONSTRAINT day_check CHECK (day in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'));
+ALTER TABLE teacher_free_time ADD CONSTRAINT workday_check CHECK (workday in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'));
 
 CREATE TABLE faculty (
     id BIGSERIAL PRIMARY KEY,
@@ -109,7 +109,7 @@ CREATE TABLE course (
     id BIGSERIAL PRIMARY KEY,
     degree VARCHAR(31) NOT NULL,
     specialty_id BIGINT NOT NULL,
-    year VARCHAR(7) NOT NULL,
+    class_year VARCHAR(7) NOT NULL,
     mode VARCHAR(15) NOT NULL,
     week VARCHAR(15) NOT NULL,
     start_week SMALLINT,
@@ -132,13 +132,13 @@ ALTER TABLE course ADD CONSTRAINT end_week_check CHECK (end_week = null or end_w
 ALTER TABLE course ADD CONSTRAINT hours_per_week_check CHECK (hours_per_week >= 1);
 ALTER TABLE course ADD CONSTRAINT meetings_per_week_check CHECK (meetings_per_week >= 1);
 ALTER TABLE course ADD CONSTRAINT degree_check CHECK (degree in ('BACHELOR_BG', 'BACHELOR_EN', 'MASTER_BG_1_5', 'MASTER_EN_1_5', 'MASTER_BG_2_5', 'MASTER_EN_2_5'));
-ALTER TABLE course ADD CONSTRAINT year_check CHECK (year in ('I', 'II', 'III', 'IV'));
+ALTER TABLE course ADD CONSTRAINT class_year_check CHECK (class_year in ('I', 'II', 'III', 'IV'));
 ALTER TABLE course ADD CONSTRAINT mode_check CHECK (mode in ('FULL_TIME', 'PART_TIME'));
 ALTER TABLE course ADD CONSTRAINT week_check CHECK (week in ('ALL', 'EVEN', 'ODD'));
 
 CREATE TABLE course_time (
     id BIGSERIAL PRIMARY KEY,
-    day VARCHAR(15) NOT NULL,
+    workday VARCHAR(15) NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     course_id BIGINT NOT NULL,
@@ -146,7 +146,7 @@ CREATE TABLE course_time (
 );
 
 ALTER TABLE course_time ADD CONSTRAINT end_time_check CHECK (end_time > start_time);
-ALTER TABLE course_time ADD CONSTRAINT day_check CHECK (day in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'));
+ALTER TABLE course_time ADD CONSTRAINT workday_check CHECK (workday in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'));
 
 CREATE TABLE university_group (
     id BIGSERIAL PRIMARY KEY,
@@ -166,16 +166,16 @@ CREATE TABLE course_group (
 
 CREATE TABLE academic_year (
     id BIGSERIAL PRIMARY KEY,
-    year SMALLINT NOT NULL,
+    study_year SMALLINT NOT NULL,
     semester VARCHAR(15) NOT NULL,
-    UNIQUE (year, semester)
+    UNIQUE (study_year, semester)
 );
 
 ALTER TABLE academic_year ADD CONSTRAINT semester_check CHECK (semester in ('WINTER', 'SUMMER'));
 
 CREATE TABLE schedule (
     id BIGSERIAL PRIMARY KEY,
-    day VARCHAR(15) NOT NULL,
+    workday VARCHAR(15) NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     hex_color VARCHAR(15) NOT NULL,
@@ -190,5 +190,5 @@ CREATE TABLE schedule (
 
 ALTER TABLE schedule ADD CONSTRAINT end_time_check CHECK (end_time > start_time);
 ALTER TABLE schedule ADD CONSTRAINT hex_color_length_check CHECK (length(hex_color) > 3);
-ALTER TABLE schedule ADD CONSTRAINT day_check CHECK (day in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'));
+ALTER TABLE schedule ADD CONSTRAINT workday_check CHECK (workday in ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'));
 ALTER TABLE schedule ADD CONSTRAINT status_check CHECK (status in ('PENDING', 'ACTIVE', 'INACTIVE'));

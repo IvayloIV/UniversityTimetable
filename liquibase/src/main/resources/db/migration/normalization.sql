@@ -4,7 +4,7 @@
 CREATE TABLE course_unf (
     id BIGINT,
     degree VARCHAR(31) NOT NULL,
-    year VARCHAR(7) NOT NULL,
+    class_year VARCHAR(7) NOT NULL,
     group_name VARCHAR(15) NOT NULL,
     group_created_date VARCHAR(255) NOT NULL,
     teacher_ucn CHAR(10) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE course_unf (
 CREATE TABLE course_1nf (
     id BIGINT,
     degree VARCHAR(31) NOT NULL,
-    year VARCHAR(7) NOT NULL,
+    class_year VARCHAR(7) NOT NULL,
     group_name VARCHAR(15) NOT NULL,
     group_created_date TIMESTAMP NOT NULL,
     teacher_ucn CHAR(10) NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE course_1nf (
 CREATE TABLE course_2nf (
     id BIGINT PRIMARY KEY,
     degree VARCHAR(31) NOT NULL,
-    year VARCHAR(7) NOT NULL,
+    class_year VARCHAR(7) NOT NULL,
     teacher_ucn CHAR(10) NOT NULL,
     first_name VARCHAR(63) NOT NULL,
     last_name VARCHAR(63) NOT NULL
@@ -57,17 +57,17 @@ CREATE TABLE teacher_3nf (
 CREATE TABLE course_3nf (
     id BIGINT PRIMARY KEY,
     degree VARCHAR(31) NOT NULL,
-    year VARCHAR(7) NOT NULL,
+    class_year VARCHAR(7) NOT NULL,
     teacher_id BIGINT NOT NULL,
     FOREIGN KEY (teacher_id) REFERENCES teacher_3nf (id)
 );
 
-INSERT INTO course_unf (id, degree, year, group_name, group_created_date, teacher_ucn, first_name, last_name)
+INSERT INTO course_unf (id, degree, class_year, group_name, group_created_date, teacher_ucn, first_name, last_name)
 VALUES (1, 'MASTER_BG_1_5', 'I', 'I, II', '2022-11-24 15:30, 2022-11-25 16:00', '9011213451', 'Иван', 'Тодоров'),
        (2, 'MASTER_BG_2_5', 'II', 'I', '2022-11-24 15:30', '9011213451', 'Иван', 'Тодоров'),
        (3, 'BACHELOR_EN', 'IV', 'I, II, III', '2022-11-24 15:30, 2022-11-25 16:00, 2022-11-26 17:15', '8901052511', 'Петър', 'Георгиев');
 
-INSERT INTO course_1nf (id, degree, year, group_name, group_created_date, teacher_ucn, first_name, last_name)
+INSERT INTO course_1nf (id, degree, class_year, group_name, group_created_date, teacher_ucn, first_name, last_name)
 VALUES (1, 'MASTER_BG_1_5', 'I', 'I', '2022-11-24 15:30', '9011213451', 'Иван', 'Тодоров'),
        (1, 'MASTER_BG_1_5', 'I', 'II', '2022-11-25 16:00', '9011213451', 'Иван', 'Тодоров'),
        (2, 'MASTER_BG_2_5', 'II', 'I', '2022-11-24 15:30', '9011213451', 'Иван', 'Тодоров'),
@@ -75,7 +75,7 @@ VALUES (1, 'MASTER_BG_1_5', 'I', 'I', '2022-11-24 15:30', '9011213451', 'Ива�
        (3, 'BACHELOR_EN', 'IV', 'II', '2022-11-25 16:00', '8901052511', 'Петър', 'Георгиев'),
        (3, 'BACHELOR_EN', 'IV', 'III', '2022-11-26 17:15', '8901052511', 'Петър', 'Георгиев');
 
-INSERT INTO course_2nf (id, degree, year, teacher_ucn, first_name, last_name)
+INSERT INTO course_2nf (id, degree, class_year, teacher_ucn, first_name, last_name)
 VALUES (1, 'MASTER_BG_1_5', 'I', '9011213451', 'Иван', 'Тодоров'),
        (2, 'MASTER_BG_2_5', 'II', '9011213451', 'Иван', 'Тодоров'),
        (3, 'BACHELOR_EN', 'IV', '8901052511', 'Петър', 'Георгиев');
@@ -97,7 +97,7 @@ INSERT INTO teacher_3nf (id, teacher_ucn, first_name, last_name)
 VALUES (1, '9011213451', 'Иван', 'Тодоров'),
        (2, '8901052511', 'Петър', 'Георгиев');
 
-INSERT INTO course_3nf (id, degree, year, teacher_id)
+INSERT INTO course_3nf (id, degree, class_year, teacher_id)
 VALUES (1, 'MASTER_BG_1_5', 'I', 1),
        (2, 'MASTER_BG_2_5', 'II', 1),
        (3, 'BACHELOR_EN', 'IV', 2);

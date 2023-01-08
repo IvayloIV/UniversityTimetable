@@ -25,7 +25,7 @@ public class Course {
     private Degree degree;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "year", nullable = false)
+    @Column(name = "class_year", nullable = false)
     private CourseYear year;
 
     @Enumerated(EnumType.STRING)
