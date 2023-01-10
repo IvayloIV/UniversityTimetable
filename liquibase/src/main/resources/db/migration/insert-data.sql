@@ -2,19 +2,29 @@
 
 --changeset ivaylo_ivanov:1
 INSERT INTO university_user (email, password, role, created_date, password_updated_date)
-VALUES ('admin@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'ADMIN', '2022-11-24 13:00', '2022-11-24 13:01'),
-       ('diqn@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2022-11-24 13:00', '2022-11-24 13:01'),
-       ('violeta@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2022-11-24 13:00', '2022-11-24 13:01'),
-       ('hristo@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2022-11-24 13:00', '2022-11-24 13:01'),
-       ('dimitrichka@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2022-11-24 13:00', '2022-11-24 13:01'),
-       ('maq@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2022-11-24 13:00', '2022-11-24 13:01');
+VALUES ('admin@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'ADMIN', '2021-11-24 13:00', '2022-12-13 15:30'),
+       ('diyan@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2021-11-24 13:00', '2022-11-25 11:15'),
+       ('violeta@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2021-11-24 13:00', '2022-11-24 12:20'),
+       ('hristo@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2021-11-24 13:00', '2022-12-16 09:14'),
+       ('dimitrichka@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2021-11-24 13:00', '2022-12-13 08:15'),
+       ('maya@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2021-11-24 13:00', '2022-11-17 19:00'),
+       ('valdimir@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2021-11-24 13:00', '2022-11-30 22:15'),
+       ('neli@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2021-11-24 13:00', '2022-11-28 23:11'),
+       ('rosen@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2021-11-24 13:00', '2022-12-14 16:45'),
+       ('ivelin@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2021-11-24 13:00', '2022-11-29 17:11'),
+       ('martin@abv.bg', '$2a$10$6S.HoSbYYkrk4mtFYbb1yuolGbupLBEVDcbFTwZR6MRe4xt1/UxZO', 'TEACHER', '2021-11-24 13:00', null);
 
 INSERT INTO teacher (academic_rank_bg, academic_rank_en, first_name_bg, first_name_en, last_name_bg, last_name_en, ucn, archived, user_id)
-VALUES ('гл. ас.', 'assist.', 'Диян', 'Diqn', 'Иванов', 'Ivanov', '1111111111', false, 2),
-       ('доц.', 'assoc. prof.', 'Виолета', 'Violeta', 'Тодорова', 'Todorova', '1111111112', false, 3),
-       ('инж.', 'eng.', 'Христо', 'Hristo', 'Ненов', 'Nenov', '1111111113', false, 4),
-       ('гл. ас.', 'assist.', 'Димитричка', 'Dimitrichka', 'Иванова', 'Iwanowa', '1111111114', false, 5),
-       ('проф.', 'prof.', 'Мая', 'Maq', 'Тодорова', 'Todorova', '1111111115', false, 6);
+VALUES ('гл. ас.', 'assist.', 'Диян', 'Diyan', 'Иванов', 'Ivanov', '9502031453', false, 2),
+       ('доц.', 'assoc. prof.', 'Виолета', 'Violeta', 'Тодорова', 'Todorova', '9210111342', false, 3),
+       ('инж.', 'eng.', 'Христо', 'Hristo', 'Петров', 'Petrov', '9010021347', false, 4),
+       ('гл. ас.', 'assist.', 'Димитричка', 'Dimitrichka', 'Иванова', 'Ivanova', '9401042452', false, 5),
+       ('проф.', 'prof.', 'Мая', 'Maya', 'Тодорова', 'Todorova', '9902041455', false, 6),
+       ('ас.', 'assist.', 'Владимир', 'Vladimir', 'Иванова', 'Ivanova', '8911129142', false, 7),
+       ('инж.', 'eng.', 'Нели', 'Neli', 'Росева', 'Roseva', '9210101253', false, 8),
+       ('проф.', 'prof.', 'Росен', 'Rosen', 'Тодорова', 'Todorova', '7510110102', false, 9),
+       ('гл. ас.', 'assist.', 'Ивелин', 'Ivelin', 'Георгиев', 'Georgiev', '6610023452', false, 10),
+       ('доц.', 'assoc. prof.', 'Мартин', 'Martin', 'Василев', 'Vasilev', '6310013357', false, 11);
 
 INSERT INTO faculty (name_bg, name_en)
 VALUES ('МТФ', 'MTF'),
@@ -23,7 +33,7 @@ VALUES ('МТФ', 'MTF'),
        ('ФИТА', 'FITA');
 
 INSERT INTO department (name_bg, name_en, faculty_id)
-VALUES ('ИМ', 'IM', 1),
+VALUES ('СТ', 'ST', 1),
        ('MTM', 'MTM', 1),
        ('ММЕ', 'MME', 1),
        ('ЕООС', 'EOOS', 2),
@@ -34,7 +44,8 @@ VALUES ('ИМ', 'IM', 1),
        ('ЕЕ', 'EE', 3),
        ('AП', 'AP', 4),
        ('ЕТМЕ', 'ETME', 4),
-       ('СИТ', 'SIT', 4);
+       ('СИТ', 'SIT', 4),
+       ('ИМ', 'IM', 1);
 
 INSERT INTO room (number_bg, number_en)
 VALUES ('НУК 325', 'NUK 325'),
@@ -47,79 +58,110 @@ VALUES ('НУК 325', 'NUK 325'),
        ('202ТВ ', '202TB');
 
 INSERT INTO specialty (name_bg, name_en, created_date, archived, department_id)
-VALUES ('СИ', 'SI', '2023-11-24 13:00', false, 12),
-       ('КСТ', 'KST', '2023-11-24 13:00', false, 12),
-       ('СМ', 'SM', '2023-11-24 13:00', false, 7),
-       ('СП', 'SP', '2023-11-24 13:00', false, 2);
+VALUES ('СИ', 'SI', '2022-12-15 13:15', false, 12),
+       ('КСТ', 'KST', '2022-11-10 12:00', false, 12),
+       ('СМ', 'SM', '2022-12-18 16:20', false, 7),
+       ('СП', 'SP', '2022-12-15 16:10', false, 2),
+       ('ИМ', 'IM', '2022-11-13 12:13', false, 13),
+       ('К', 'C', '2022-12-10 11:10', false, 12);
 
 INSERT INTO subject (name_bg, name_en, type, active, archived, created_date)
-VALUES ('УИС', 'UIS', 'LECTURE', true, false, '2023-11-24 13:00'),
-       ('УИС', 'UIS', 'EXERCISE', true, false, '2023-11-24 13:00'),
-       ('УИС', 'UIS', 'COURSEWORK', true, false, '2023-11-24 13:00'),
-       ('ППC#', 'PPC#', 'LECTURE', true, false, '2023-11-24 13:00'),
-       ('ППC#', 'PPC#', 'EXERCISE', true, false, '2023-11-24 13:00'),
-       ('ППC#', 'PPC#', 'COURSEWORK', true, false, '2023-11-24 13:00'),
-       ('ПМС', 'PMS', 'LECTURE', true, false, '2023-11-24 13:00'),
-       ('ПМС', 'PMS', 'EXERCISE', true, false, '2023-11-24 13:00'),
-       ('Андроид БТМУ', 'Android BTMU', 'LECTURE', true, false, '2023-11-24 13:00'),
-       ('Андроид БТМУ', 'Android BTMU', 'EXERCISE', true, false, '2023-11-24 13:00'),
-       ('ИМУ', 'IMU', 'LECTURE', true, false, '2023-11-24 13:00'),
-       ('ИМУ', 'IMU', 'EXERCISE', true, false, '2023-11-24 13:00'),
-       ('СКМ', 'SKM', 'LECTURE', true, false, '2023-11-24 13:00'),
-       ('СКМ', 'SKM', 'EXERCISE', true, false, '2023-11-24 13:00'),
-       ('ВК', 'VK', 'LECTURE', true, false, '2023-11-24 13:00'),
-       ('ВК', 'VK', 'EXERCISE', true, false, '2023-11-24 13:00'),
-       ('ВК', 'VK', 'COURSEWORK', true, false, '2023-11-24 13:00'),
-       ('КА', 'KA', 'LECTURE', true, false, '2023-11-24 13:00');
+VALUES ('УИС', 'UIS', 'LECTURE', true, false, '2022-11-11 15:15'),
+       ('УИС', 'UIS', 'EXERCISE', true, false, '2022-12-01 13:10'),
+       ('УИС', 'UIS', 'COURSEWORK', true, false, '2022-12-13 14:16'),
+       ('ППC#', 'PPC#', 'LECTURE', true, false, '2022-12-12 11:23'),
+       ('ППC#', 'PPC#', 'EXERCISE', true, false, '2022-11-02 17:21'),
+       ('ППC#', 'PPC#', 'COURSEWORK', true, false, '2022-11-24 14:15'),
+       ('ПМС', 'PMS', 'LECTURE', true, false, '2022-11-03 16:14'),
+       ('ПМС', 'PMS', 'EXERCISE', true, false, '2023-01-10 17:11'),
+       ('Андроид БТМУ', 'Android BTMU', 'LECTURE', true, false, '2022-11-07 12:20'),
+       ('Андроид БТМУ', 'Android BTMU', 'EXERCISE', true, false, '2022-11-01 13:15'),
+       ('УРК', 'URK', 'LECTURE', true, false, '2022-11-09 18:30'),
+       ('УРК', 'URK', 'EXERCISE', true, false, '2022-11-10 09:11'),
+       ('СКМ', 'SKM', 'LECTURE', true, false, '2022-11-15 10:12'),
+       ('СКМ', 'SKM', 'EXERCISE', true, false, '2022-12-14 14:17'),
+       ('ВК', 'VK', 'LECTURE', true, false, '2022-12-19 13:16'),
+       ('ВК', 'VK', 'EXERCISE', true, false, '2022-11-14 18:11'),
+       ('ВК', 'VK', 'COURSEWORK', true, false, '2022-12-03 11:17'),
+       ('КА', 'KA', 'LECTURE', true, false, '2022-11-13 14:30'),
+       ('КА', 'KA', 'EXERCISE', true, false, '2022-10-15 14:15'),
+       ('МК', 'QM', 'LECTURE', true, false, '2022-11-17 11:30'),
+       ('МК', 'QM', 'EXERCISE', true, false, '2022-11-13 11:45'),
+       ('МК', 'QM', 'COURSEWORK', true, false, '2022-11-16 11:50'),
+       ('ПМ', 'PM', 'LECTURE', true, false, '2022-10-15 10:15'),
+       ('ПМ', 'PM', 'EXERCISE', true, false, '2022-12-17 09:15'),
+       ('ПТ', 'PT', 'LECTURE', true, false, '2022-11-16 10:55'),
+       ('ПТ', 'PT', 'EXERCISE', true, false, '2022-11-12 10:11'),
+       ('ИП', 'ЕЕ', 'LECTURE', false, false, '2022-12-03 13:30');
 
 INSERT INTO course (degree, specialty_id, class_year, mode, week, start_week, end_week, hours_per_week, meetings_per_week, teacher_id, room_id, subject_id, active, archived)
-VALUES ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'EVEN', null, null, 4, 2, 1, 1, 3, true, false),
-       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ODD', 1, 10, 4, 2, 1, 2, 1, true, false),
-       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 4, 2, 1, 3, 2, true, false),
-       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 4, 2, 2, 4, 4, true, false),
-       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 4, 2, 2, 4, 5, true, false),
-       ('MASTER_BG_1_5', 1, 'II', 'FULL_TIME', 'ALL', null, null, 4, 2, 5, 6, 10, true, false),
-       ('MASTER_BG_1_5', 2, 'II', 'PART_TIME', 'ALL', null, null, 4, 2, 5, 6, 10, true, false),
-       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'EVEN', 2, 7, 4, 2, 2, 4, 6, true, false),
-       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 4, 2, 3, 8, 7, true, false),
-       ('MASTER_EN_1_5', 4, 'II', 'PART_TIME', 'ALL', null, null, 4, 2, 5, 6, 10, true, false),
-       ('MASTER_EN_1_5', 4, 'II', 'PART_TIME', 'ALL', null, null, 4, 2, 5, 6, 1, true, false),
-       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', 1, 4, 4, 2, 3, 7, 8, true, false),
-       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 4, 2, 4, 5, 9, true, false),
-       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 4, 2, 5, 6, 10, true, false),
-       ('MASTER_BG_1_5', 2, 'II', 'PART_TIME', 'EVEN', null, null, 4, 2, 5, 6, 3, true, false),
-       ('MASTER_BG_1_5', 2, 'II', 'PART_TIME', 'ALL', null, null, 4, 2, 4, 5, 5, true, false),
-       ('MASTER_BG_1_5', 2, 'II', 'PART_TIME', 'ALL', 1, 10, 4, 2, 3, 5, 7, true, false);
+VALUES ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'EVEN', null, null, 3, 1, 1, 1, 3, true, false),
+       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 3, 1, 2, 2, 4, true, false),
+       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 3, 1, 3, 3, 7, true, false),
+       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', 1, 10, 3, 1, 3, 3, 8, true, false),
+       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ODD', 7, 15, 3, 1, 4, 4, 6, true, false),
+       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 3, 1, 1, 5, 2, true, false),
+       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 3, 1, 6, 6, 10, true, false),
+       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 3, 1, 3, 6, 9, true, false),
+       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 3, 1, 4, 1, 5, true, false),
+       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ALL', null, null, 3, 1, 5, 2, 1, true, false),
+       ('MASTER_BG_2_5', 6, 'II', 'PART_TIME', 'ALL', null, null, 3, 1, 7, 8, 11, true, false),
+       ('MASTER_BG_2_5', 6, 'II', 'PART_TIME', 'ALL', null, null, 3, 1, 8, 2, 13, true, false),
+       ('MASTER_BG_2_5', 6, 'II', 'PART_TIME', 'ALL', null, null, 3, 1, 9, 6, 15, true, false),
+       ('MASTER_BG_2_5', 6, 'II', 'PART_TIME', 'ALL', null, null, 3, 1, 7, 1, 12, true, false),
+       ('MASTER_BG_2_5', 6, 'II', 'PART_TIME', 'ALL', null, null, 3, 1, 9, 4, 16, true, false),
+       ('MASTER_BG_2_5', 6, 'II', 'PART_TIME', 'ALL', null, null, 3, 1, 10, 8, 14, true, false),
+       ('MASTER_BG_2_5', 6, 'II', 'PART_TIME', 'ALL', null, null, 3, 1, 1, 2, 18, true, false),
+       ('MASTER_BG_2_5', 6, 'II', 'PART_TIME', 'ALL', null, null, 3, 1, 1, 1, 19, true, false),
+       ('BACHELOR_EN', 5, 'III', 'FULL_TIME', 'ALL', null, null, 3, 1, 3, 8, 20, true, false),
+       ('BACHELOR_EN', 5, 'III', 'FULL_TIME', 'ALL', null, null, 3, 1, 3, 8, 21, true, false),
+       ('BACHELOR_EN', 5, 'III', 'FULL_TIME', 'EVEN', 7, 15, 3, 1, 3, 7, 22, true, false),
+       ('BACHELOR_EN', 5, 'III', 'FULL_TIME', 'ALL', null, null, 3, 1, 5, 1, 23, true, false),
+       ('BACHELOR_EN', 5, 'III', 'FULL_TIME', 'ALL', null, null, 3, 1, 1, 6, 24, true, false),
+       ('BACHELOR_EN', 5, 'III', 'FULL_TIME', 'ALL', null, null, 3, 1, 8, 5, 25, true, false),
+       ('BACHELOR_EN', 5, 'III', 'FULL_TIME', 'ALL', null, null, 3, 1, 8, 2, 26, true, false),
+       ('BACHELOR_EN', 5, 'III', 'FULL_TIME', 'ALL', null, null, 3, 1, 2, 2, 27, true, false),
+       ('MASTER_BG_2_5', 6, 'II', 'PART_TIME', 'ALL', null, null, 3, 1, 2, 2, 27, true, false),
+       ('MASTER_BG_1_5', 1, 'I', 'FULL_TIME', 'ODD', 1, 10, 3, 1, 5, 1, 27, false, false);
 
 INSERT INTO university_group (name, created_date)
-values ('I', '2023-11-24 13:00'),
-       ('II', '2023-11-24 13:00');
+values ('I', '2022-11-14 14:13'),
+       ('II', '2022-11-13 18:16');
 
 INSERT INTO course_group (course_id, group_id)
-VALUES (1, 1),
-       (2, 1),
-       (3, 2),
-       (4, 1),
-       (7, 1),
-       (10, 1),
-       (11, 2);
+VALUES (4, 1),
+       (4, 2),
+       (28, 1),
+       (28, 2);
 
 INSERT INTO academic_year (study_year, semester)
 VALUES (2022, 'WINTER'),
        (2023, 'SUMMER');
 
 INSERT INTO schedule (workday, start_time, end_time, hex_color, status, course_id, group_id, academic_year_id)
-VALUES ('MONDAY', '08:45', '11:00', '#6E9EF7', 'PENDING', 1, 1, 1),
-       ('WEDNESDAY', '17:15', '19:15', '#D884F7', 'PENDING', 8, null, 1),
-       ('MONDAY', '13:45', '15:00', '#C496F1', 'PENDING', 2, 1, 1),
-       ('TUESDAY', '07:30', '10:00', '#7EFCCB', 'PENDING', 4, 1, 1),
-       ('THURSDAY', '12:00', '13:15', '#F7EE84', 'PENDING', 11, 2, 1),
-       ('TUESDAY', '12:30', '14:30', '#7EFCEB', 'PENDING', 6, null, 1),
-       ('WEDNESDAY', '15:00', '17:00', '#84AFF7', 'PENDING', 7, 1, 1),
-       ('FRIDAY', '09:15', '11:30', '#8494F7', 'PENDING', 13, null, 1),
-       ('WEDNESDAY', '09:15', '11:15', '#BAF784', 'PENDING', 9, null, 1),
-       ('THURSDAY', '09:00', '11:15', '#84F7EE', 'PENDING', 10, 1, 1),
-       ('MONDAY', '16:00', '18:00', '#F196B4', 'PENDING', 3, 2, 1),
-       ('THURSDAY', '16:00', '18:15', '#F484F7', 'PENDING', 12, null, 1),
-       ('TUESDAY', '11:30', '13:30', '#FCDF7E', 'PENDING', 5, null, 1),
-       ('FRIDAY', '14:00', '16:15', '#84F7A5', 'PENDING', 14, null, 1);
+VALUES ('MONDAY', '08:45', '11:30', '#DDAFF8', 'PENDING', 1, null, 1),
+       ('MONDAY', '11:30', '14:15', '#FFE2AD', 'PENDING', 2, null, 1),
+       ('TUESDAY', '09:00', '11:45', '#FFB8DC', 'PENDING', 3, null, 1),
+       ('TUESDAY', '11:45', '14:30', '#FFB8DC', 'PENDING', 4, 2, 1),
+       ('WEDNESDAY', '08:30', '11:15', '#FFE2AD', 'PENDING', 5, null, 1),
+       ('WEDNESDAY', '11:15', '14:00', '#DDAFF8', 'PENDING', 6, null, 1),
+       ('WEDNESDAY', '14:00', '16:45', '#C6F7C9', 'PENDING', 7, null, 1),
+       ('THURSDAY', '08:00', '10:45', '#FFB8DC', 'PENDING', 4, 1, 1),
+       ('THURSDAY', '10:45', '13:00', '#C6F7C9', 'PENDING', 8, null, 1),
+       ('FRIDAY', '12:00', '14:45', '#FFE2AD', 'PENDING', 9, null, 1),
+       ('FRIDAY', '14:45', '17:30', '#DDAFF8', 'PENDING', 10, null, 1),
+       ('TUESDAY', '11:00', '13:45', '#C6E1F7', 'PENDING', 11, null, 1),
+       ('TUESDAY', '13:45', '16:30', '#C6F7C9', 'PENDING', 12, null, 1),
+       ('WEDNESDAY', '09:00', '11:45', '#DBBDFC', 'PENDING', 13, null, 1),
+       ('WEDNESDAY', '11:45', '14:30', '#C6E1F7', 'PENDING', 14, null, 1),
+       ('WEDNESDAY', '14:30', '17:15', '#DBBDFC', 'PENDING', 15, null, 1),
+       ('THURSDAY', '10:00', '12:45', '#C6F7C9', 'PENDING', 16, null, 1),
+       ('THURSDAY', '12:45', '15:30', '#FFE2AD', 'PENDING', 17, null, 1),
+       ('THURSDAY', '15:30', '18:15', '#FFE2AD', 'PENDING', 18, null, 1),
+       ('WEDNESDAY', '09:00', '11:45', '#FAE0B4', 'PENDING', 19, null, 1),
+       ('WEDNESDAY', '11:45', '14:30', '#FAE0B4', 'PENDING', 20, null, 1),
+       ('WEDNESDAY', '14:30', '17:15', '#FAB4F8', 'PENDING', 25, null, 1),
+       ('THURSDAY', '10:15', '13:00', '#C6E1F7', 'PENDING', 22, null, 1),
+       ('THURSDAY', '13:00', '15:45', '#FAE0B4', 'PENDING', 21, null, 1),
+       ('FRIDAY', '11:15', '14:00', '#FAB4F8', 'PENDING', 24, null, 1),
+       ('FRIDAY', '14:00', '16:15', '#C6E1F7', 'PENDING', 23, null, 1);
