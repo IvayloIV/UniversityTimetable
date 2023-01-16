@@ -60,6 +60,15 @@
                         </th:block>
                     </tr>
                 </th:block>
+                <tr>
+                    <td style="width:4%"></td>
+                    <td colspan="4" style="width:6%"></td>
+                    <th:block th:each="h,hourRowStat : ${#numbers.sequence(7,19)}">
+                        <th:block th:each="m,minuteRowStat : ${#numbers.sequence(15,60,15)}">
+                            <td style="width:1.7%"></td>
+                        </th:block>
+                    </th:block>
+                </tr>
             </tbody>
         </table>
     </div>

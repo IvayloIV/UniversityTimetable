@@ -10,7 +10,15 @@ public class CourseSpecification {
         if (ObjectUtils.isEmpty(archived)) {
             return null;
         } else {
-            return (subject, cq, cb) -> cb.equal(subject.get("archived"), archived);
+            return (course, cq, cb) -> cb.equal(course.get("archived"), archived);
+        }
+    }
+
+    public static Specification<Course> isActive(Boolean active) {
+        if (ObjectUtils.isEmpty(active)) {
+            return null;
+        } else {
+            return (course, cq, cb) -> cb.equal(course.get("active"), active);
         }
     }
 
@@ -18,7 +26,7 @@ public class CourseSpecification {
         if (ObjectUtils.isEmpty(archived)) {
             return null;
         } else {
-            return (subject, cq, cb) -> cb.equal(subject.get("teacher").get("archived"), archived);
+            return (course, cq, cb) -> cb.equal(course.get("teacher").get("archived"), archived);
         }
     }
 
@@ -26,7 +34,23 @@ public class CourseSpecification {
         if (ObjectUtils.isEmpty(archived)) {
             return null;
         } else {
-            return (subject, cq, cb) -> cb.equal(subject.get("specialty").get("archived"), archived);
+            return (course, cq, cb) -> cb.equal(course.get("specialty").get("archived"), archived);
+        }
+    }
+
+    public static Specification<Course> isSubjectArchived(Boolean archived) {
+        if (ObjectUtils.isEmpty(archived)) {
+            return null;
+        } else {
+            return (course, cq, cb) -> cb.equal(course.get("subject").get("archived"), archived);
+        }
+    }
+
+    public static Specification<Course> isSubjectActive(Boolean active) {
+        if (ObjectUtils.isEmpty(active)) {
+            return null;
+        } else {
+            return (course, cq, cb) -> cb.equal(course.get("subject").get("active"), active);
         }
     }
 
@@ -34,7 +58,7 @@ public class CourseSpecification {
         if (ObjectUtils.isEmpty(subjectId)) {
             return null;
         } else {
-            return (subject, cq, cb) -> cb.equal(subject.get("subject").get("id"), subjectId);
+            return (course, cq, cb) -> cb.equal(course.get("subject").get("id"), subjectId);
         }
     }
 }

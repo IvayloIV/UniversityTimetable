@@ -1,6 +1,8 @@
 package bg.tuvarna.universitytimetable.entity;
 
 import bg.tuvarna.universitytimetable.entity.enums.Semester;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +10,9 @@ import javax.persistence.*;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "academic_year",
         uniqueConstraints = {
             @UniqueConstraint(columnNames = {"study_year", "semester"})

@@ -9,6 +9,8 @@ import bg.tuvarna.universitytimetable.entity.enums.*;
 import bg.tuvarna.universitytimetable.exception.EntityNotFoundException;
 import bg.tuvarna.universitytimetable.exception.ValidationException;
 import bg.tuvarna.universitytimetable.mapper.ScheduleMapper;
+import bg.tuvarna.universitytimetable.repository.AcademicYearRepository;
+import bg.tuvarna.universitytimetable.repository.CourseRepository;
 import bg.tuvarna.universitytimetable.repository.ScheduleRepository;
 import bg.tuvarna.universitytimetable.service.*;
 import bg.tuvarna.universitytimetable.util.DayOfWeekUtil;
@@ -30,10 +32,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static bg.tuvarna.universitytimetable.repository.specification.CourseSpecification.*;
 import static bg.tuvarna.universitytimetable.repository.specification.ScheduleSpecification.*;
 import static org.springframework.data.jpa.domain.Specification.where;
 
@@ -51,6 +56,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final EmailService emailService;
     private final QueryParamsUtil queryParamsUtil;
     private final TeacherService teacherService;
+    private final CourseRepository courseRepository;
+    private final AcademicYearRepository academicYearRepository;
+
+    private static final String[] SCHEDULE_HEX_COLORS = {"#FAE0B4", "#C6E1F7", "#FAB4F8", "#DDAFF8",
+            "#FFE2AD", "#FFB8DC", "#C6F7C9", "#8CC9FF", "#DBBDFC", "#DBFDBC"};
 
     @Autowired
     public ScheduleServiceImpl(ScheduleRepository scheduleRepository,
@@ -62,7 +72,9 @@ public class ScheduleServiceImpl implements ScheduleService {
                                CsvParserService csvParserService,
                                EmailService emailService,
                                QueryParamsUtil queryParamsUtil,
-                               TeacherService teacherService) {
+                               TeacherService teacherService,
+                               CourseRepository courseRepository,
+                               AcademicYearRepository academicYearRepository) {
         this.scheduleRepository = scheduleRepository;
         this.resourceBundleUtil = resourceBundleUtil;
         this.scheduleMapper = scheduleMapper;
@@ -73,6 +85,8 @@ public class ScheduleServiceImpl implements ScheduleService {
         this.emailService = emailService;
         this.queryParamsUtil = queryParamsUtil;
         this.teacherService = teacherService;
+        this.courseRepository = courseRepository;
+        this.academicYearRepository = academicYearRepository;
     }
 
     @Override
@@ -126,8 +140,226 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    @Transactional
     public void generateSchedules() {
-        //TODO
+        AcademicYear academicYear = academicYearService.getLastAcademicYear();
+        LocalDate localDate = LocalDate.now();
+        short year = (short) localDate.getYear();
+        Semester semester = localDate.getMonth().getValue() <= 6 ? Semester.SUMMER : Semester.WINTER;
+
+        if (academicYear.getYear() != year || !academicYear.getSemester().equals(semester)) {
+            academicYear = AcademicYear.builder()
+                .year(year)
+                .semester(semester)
+                .build();
+            academicYearRepository.save(academicYear);
+        }
+
+        List<Course> courses = courseRepository.findAll(
+            where(isArchived(false))
+                .and(isActive(true))
+                .and(isSubjectArchived(false))
+                .and(isSubjectActive(true)),
+            Sort.by(List.of(
+                new Order(Sort.Direction.ASC, "specialty.department.faculty.id"),
+                new Order(Sort.Direction.ASC, "specialty.department.id"),
+                new Order(Sort.Direction.ASC, "specialty.id"),
+                new Order(Sort.Direction.ASC, "degree"),
+                new Order(Sort.Direction.ASC, "year"),
+                new Order(Sort.Direction.ASC, "mode"),
+                new Order(Sort.Direction.ASC, "id")
+            ))
+        );
+
+        int colorCounter = 0;
+        Map<String, String> colorMap = new HashMap<>();
+        Map<ScheduleGenerationModel, Map<DayOfWeek, TreeSet<Schedule>>> scheduleMap = new HashMap<>();
+        for (Course course : courses) {
+            List<CourseTime> courseTimes = new ArrayList<>(course.getCourseTimes());
+            List<TeacherFreeTime> teacherFreeTimes = new ArrayList<>(course.getTeacher().getTeacherFreeTime());
+
+            if (teacherFreeTimes.size() != 0 && courseTimes.size() == 0) {
+                for (TeacherFreeTime teacherFreeTime : teacherFreeTimes) {
+                    courseTimes.add(
+                        CourseTime.builder()
+                            .day(teacherFreeTime.getDay())
+                            .startTime(teacherFreeTime.getStartTime())
+                            .endTime(teacherFreeTime.getEndTime())
+                            .build()
+                    );
+                }
+            } else if (teacherFreeTimes.size() != 0) {
+                List<CourseTime> tempCourseTimes = new ArrayList<>();
+
+                for (CourseTime courseTime : courseTimes) {
+                    LocalTime courseStartTime = courseTime.getStartTime();
+                    LocalTime courseEndTime = courseTime.getEndTime();
+
+                    for (TeacherFreeTime teacherFreeTime : teacherFreeTimes) {
+                        LocalTime teacherFreeStartTime = teacherFreeTime.getStartTime();
+                        LocalTime teacherFreeEndTime = teacherFreeTime.getEndTime();
+
+                        if (courseTime.getDay().equals(teacherFreeTime.getDay())
+                                && courseStartTime.compareTo(teacherFreeEndTime) <= 0
+                                && courseEndTime.compareTo(teacherFreeStartTime) >= 0) {
+                            tempCourseTimes.add(CourseTime
+                                .builder()
+                                .day(courseTime.getDay())
+                                .startTime(courseStartTime.compareTo(teacherFreeStartTime) >= 0 ? courseStartTime : teacherFreeStartTime)
+                                .endTime(courseEndTime.compareTo(teacherFreeEndTime) >= 0 ? teacherFreeEndTime : courseEndTime)
+                                .build());
+                        }
+                    }
+                }
+
+                if (tempCourseTimes.size() == 0) {
+                    throw new EntityNotFoundException(resourceBundleUtil.getMessage("scheduleList.freeTimeOverlapMissing"));
+                }
+
+                courseTimes = tempCourseTimes;
+            }
+
+            ScheduleGenerationModel generationModel = ScheduleGenerationModel.builder()
+                .specialtyId(course.getSpecialty().getId())
+                .degree(course.getDegree())
+                .year(course.getYear())
+                .mode(course.getMode())
+                .build();
+
+            if (!scheduleMap.containsKey(generationModel)) {
+                scheduleMap.put(generationModel,
+                    Map.of(DayOfWeek.MONDAY, new TreeSet<>(Comparator.comparing(Schedule::getStartTime)),
+                        DayOfWeek.TUESDAY, new TreeSet<>(Comparator.comparing(Schedule::getStartTime)),
+                        DayOfWeek.WEDNESDAY, new TreeSet<>(Comparator.comparing(Schedule::getStartTime)),
+                        DayOfWeek.THURSDAY, new TreeSet<>(Comparator.comparing(Schedule::getStartTime)),
+                        DayOfWeek.FRIDAY, new TreeSet<>(Comparator.comparing(Schedule::getStartTime)))
+                    );
+            }
+
+            Map<DayOfWeek, TreeSet<Schedule>> schedules = scheduleMap.get(generationModel);
+            int lectureLength = course.getHoursPerWeek() / course.getMeetingsPerWeek();
+            int lectureMinutes = lectureLength * 60 - 15;
+
+            List<Group> groups = course.getGroups();
+            if (groups.size() == 0) {
+                groups = List.of(Group.builder()
+                    .id(-1L)
+                    .build()
+                );
+            }
+
+            for (Group group : groups) {
+                MEETINGS_LOOP: for (int i = 0; i < course.getMeetingsPerWeek(); i++) {
+                    LinkedHashMap<DayOfWeek, TreeSet<Schedule>> sortedSchedules = schedules.entrySet().stream()
+                            .sorted(Comparator.comparingInt(a -> Math.abs(2 - a.getValue().size())))
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+                    for (DayOfWeek day : sortedSchedules.keySet()) {
+                        TreeSet<Schedule> scheduleByDay = sortedSchedules.get(day);
+
+                        if (scheduleByDay.size() == 0) {
+                            if (courseTimes.size() == 0) {
+                                LocalTime startTime = LocalTime.of(11, 0);
+                                colorCounter = generateColor(colorCounter, colorMap, course.getSubject().getNameBg());
+                                scheduleByDay.add(createSchedule(day, startTime, startTime.plusMinutes(lectureMinutes),
+                                        colorMap.get(course.getSubject().getNameBg()), course, group, academicYear));
+                                continue MEETINGS_LOOP;
+                            } else {
+                                for (CourseTime courseTime : courseTimes) {
+                                    if (courseTime.getDay().equals(day)
+                                            && courseTime.getStartTime().plusMinutes(lectureMinutes).compareTo(courseTime.getEndTime()) <= 0) {
+                                        colorCounter = generateColor(colorCounter, colorMap, course.getSubject().getNameBg());
+                                        scheduleByDay.add(createSchedule(day, courseTime.getStartTime(), courseTime.getStartTime().plusMinutes(lectureMinutes),
+                                                colorMap.get(course.getSubject().getNameBg()), course, group, academicYear));
+                                        continue MEETINGS_LOOP;
+                                    }
+                                }
+                            }
+                        } else {
+                            Schedule lastSchedule = scheduleByDay.last();
+                            LocalTime finalTime = LocalTime.of(20, 15);
+
+                            for (LocalTime startTime = lastSchedule.getEndTime(); startTime.compareTo(finalTime) < 0; startTime = startTime.plusMinutes(15)) {
+                                if (startTime.plusMinutes(lectureMinutes).compareTo(finalTime) > 0) {
+                                    continue;
+                                }
+
+                                if (courseTimes.size() == 0) {
+                                    colorCounter = generateColor(colorCounter, colorMap, course.getSubject().getNameBg());
+                                    scheduleByDay.add(createSchedule(day, startTime, startTime.plusMinutes(lectureMinutes),
+                                            colorMap.get(course.getSubject().getNameBg()), course, group, academicYear));
+                                    continue MEETINGS_LOOP;
+                                } else {
+                                    for (CourseTime courseTime : courseTimes) {
+                                        if (courseTime.getDay().equals(day)
+                                                && courseTime.getStartTime().compareTo(startTime) <= 0
+                                                && courseTime.getEndTime().compareTo(startTime.plusMinutes(lectureMinutes)) >= 0) {
+                                            colorCounter = generateColor(colorCounter, colorMap, course.getSubject().getNameBg());
+                                            scheduleByDay.add(createSchedule(day, startTime, startTime.plusMinutes(lectureMinutes),
+                                                    colorMap.get(course.getSubject().getNameBg()), course, group, academicYear));
+                                            continue MEETINGS_LOOP;
+                                        }
+                                    }
+                                }
+                            }
+
+                            Schedule firstSchedule = scheduleByDay.first();
+                            LocalTime initialTime = LocalTime.of(7, 15);
+                            for (LocalTime startTime = firstSchedule.getStartTime().minusMinutes(15); startTime.compareTo(initialTime) > 0; startTime = startTime.minusMinutes(15)) {
+                                if (startTime.plusMinutes(lectureMinutes).compareTo(firstSchedule.getStartTime()) > 0) {
+                                    continue;
+                                }
+
+                                if (courseTimes.size() == 0) {
+                                    colorCounter = generateColor(colorCounter, colorMap, course.getSubject().getNameBg());
+                                    scheduleByDay.add(createSchedule(day, startTime, startTime.plusMinutes(lectureMinutes),
+                                            colorMap.get(course.getSubject().getNameBg()), course, group, academicYear));
+                                    continue MEETINGS_LOOP;
+                                } else {
+                                    for (CourseTime courseTime : courseTimes) {
+                                        if (courseTime.getDay().equals(day)
+                                                && courseTime.getStartTime().compareTo(startTime) <= 0
+                                                && courseTime.getEndTime().compareTo(startTime.plusMinutes(lectureMinutes)) >= 0) {
+                                            colorCounter = generateColor(colorCounter, colorMap, course.getSubject().getNameBg());
+                                            scheduleByDay.add(createSchedule(day, startTime, startTime.plusMinutes(lectureMinutes),
+                                                    colorMap.get(course.getSubject().getNameBg()), course, group, academicYear));
+                                            continue MEETINGS_LOOP;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    throw new EntityNotFoundException(resourceBundleUtil.getMessage("scheduleList.generateException"));
+                }
+            }
+        }
+    }
+
+    private Schedule createSchedule(DayOfWeek day, LocalTime startTime, LocalTime endTime, String color,
+                                Course course, Group group, AcademicYear academicYear) {
+        Schedule schedule = new Schedule();
+        schedule.setDay(day);
+        schedule.setStartTime(startTime);
+        schedule.setEndTime(endTime);
+        schedule.setHexColor(color);
+        schedule.setStatus(ScheduleStatus.PENDING);
+        schedule.setCourse(course);
+        if (group.getId() != -1) {
+            schedule.setGroup(group);
+        }
+        schedule.setAcademicYear(academicYear);
+        scheduleRepository.save(schedule);
+        return schedule;
+    }
+
+    private int generateColor(int colorCounter, Map<String, String> colorMap, String subjectName) {
+        if (!colorMap.containsKey(subjectName)) {
+            String color = SCHEDULE_HEX_COLORS[colorCounter++ % SCHEDULE_HEX_COLORS.length];
+            colorMap.put(subjectName, color);
+        }
+        return colorCounter;
     }
 
     @Override

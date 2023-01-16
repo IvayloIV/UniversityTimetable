@@ -151,6 +151,13 @@ $(window).on('load', () => {
         tempNewCourseWrapper.find('.create-course').on('click', addNewCourse);
         tempNewCourseWrapper.find('.create-group').on('click', createGroupHandler);
         tempNewCourseWrapper.find('.add-course-time').on('click', addCourseHandler);
+
+        var tempFacultySelect = tempNewCourseWrapper.find('.faculty-select');
+        var tempDepartmentSelect = tempNewCourseWrapper.find('.department-select');
+        var tempSpecialtySelect = tempNewCourseWrapper.find('.specialty-select');
+        tempFacultySelect.on('change', () => loadDepartments(tempFacultySelect, tempDepartmentSelect, tempSpecialtySelect));
+        tempDepartmentSelect.on('change', () => loadSpecialties(tempDepartmentSelect, tempSpecialtySelect));
+
         loadDepartments(tempNewCourseWrapper.find('.faculty-select'),
             tempNewCourseWrapper.find('.department-select'),
             tempNewCourseWrapper.find('.specialty-select'));
